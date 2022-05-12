@@ -6,10 +6,12 @@ using TMPro;
 
 public class LevelSelector2 : MonoBehaviour
 {                                                           // https://www.youtube.com/watch?v=tCr_i5CVv_w, Unity - Creating a Level Select Screen in C#    
+                                                            // BETTER: https://unity3d.college/2017/07/30/unity-ugui-scrollrect-creating-a-dynamic-image-loading-carousel/
+                                                            // prevent the level list from spawning in middle: https://answers.unity.com/questions/1089307/scroll-rect-starting-in-the-middle.html
     public GameObject levelHolder;      // the panel
-    public GameObject levelIcon;
+    public GameObject levelIcon;        // button prefab
     public GameObject thisCanvas;
-    public int numberOfLevels = 99;
+    public int numberOfLevels = 222;
     public Vector2 iconSpacing;
     private Rect panelDimensions;
     private Rect iconDimensions;
@@ -19,10 +21,12 @@ public class LevelSelector2 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        numberOfLevels = GameManager.instance.highestLevelNumberThatExists;
+        numberOfLevels = GameManager.instance.ReturnHighestLevelNumberThatExists() + 1;
         panelDimensions = levelHolder.GetComponent<RectTransform>().rect;
+        //Debug.Log("panel dimensions: " + panelDimensions);
         iconDimensions = levelIcon.GetComponent<RectTransform>().rect;
         int maxInARow = Mathf.FloorToInt((panelDimensions.width + iconSpacing.x) / (iconDimensions.width + iconSpacing.x));
+        //Debug.Log("maxInARow: " + maxInARow);
         int maxInACol = Mathf.FloorToInt((panelDimensions.height + iconSpacing.y) / (iconDimensions.height + iconSpacing.y));
         //amountPerPage = maxInARow * maxInACol;
         //Debug.Log("number of levels: " + numberOfLevels);
@@ -60,6 +64,7 @@ public class LevelSelector2 : MonoBehaviour
         GridLayoutGroup grid = panel.AddComponent<GridLayoutGroup>();
         grid.cellSize = new Vector2(iconDimensions.width, iconDimensions.height);
         grid.childAlignment = TextAnchor.MiddleCenter;      // makes our icons centered inside our panel
+        //grid.childAlignment = TextAnchor.UpperCenter;
         grid.spacing = iconSpacing;
     }
 
@@ -91,6 +96,7 @@ public class LevelSelector2 : MonoBehaviour
 
     void LoadIcons(int numberOfIcons, GameObject parentObject)
     {
+        currentLevelCount = 0;
         for (int i = 1; i <= numberOfIcons; i++)
         {
             currentLevelCount++;
@@ -104,15 +110,13 @@ public class LevelSelector2 : MonoBehaviour
             // "3_Completed"
             var completedInt = PlayerPrefs.GetInt(tempString, 0);
 
-            ColorBlock colorBlock = new ColorBlock();
-            colorBlock.normalColor = new Color(0, 1, 0, 1);
+            //ColorBlock colorBlock = new ColorBlock();
+            //colorBlock.normalColor = new Color(0, 1, 0, 1);
 
             if (completedInt == 1) {
+                icon.GetComponent<LevelSelectScreenButton>().ChangeLevelSelectButtonColorToCompleted();
                 //Debug.Log("this level is completed: " + tempString);
                 //icon.gameObject.GetComponent<Button>().interactable = false;
-                // if it IS COMPLETED, then change color to 0.35, 1, 1
-                //icon.GetComponent<Button>().colors = colorBlock;
-                icon.GetComponentInChildren<TextMeshProUGUI>().color = new Color(.95f, .1f, .1f, 1);
             } else {
                 //colors.normalColor = new Color(0, 0, 0, 1);
             }
@@ -123,9 +127,4 @@ public class LevelSelector2 : MonoBehaviour
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

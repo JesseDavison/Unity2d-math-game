@@ -68,6 +68,7 @@ public class DragDropLittle : MonoBehaviour
             encounteredObject = objectMagnetizedTo;
             //objectMagnetizedTo.GetComponent<MathOperators>().magnet1occupied = false;
             objectMagnetizedTo.GetComponent<MathOperators>().magnet1occupied = false;
+            encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
             objectMagnetizedTo.GetComponent<MathOperators>().firstNumber = null;
             objectMagnetizedTo.GetComponent<MathOperators>().firstNumberValue = -1;
         }
@@ -75,6 +76,7 @@ public class DragDropLittle : MonoBehaviour
         {
             encounteredObject = objectMagnetizedTo;
             objectMagnetizedTo.GetComponent<MathOperators>().magnet2occupied = false;
+            encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
             objectMagnetizedTo.GetComponent<MathOperators>().secondNumber = null;
             objectMagnetizedTo.GetComponent<MathOperators>().secondNumberValue = -1;
         }
@@ -129,15 +131,7 @@ public class DragDropLittle : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, defaultZposition);
 
-        if (encounteredObject != null && encounteredObject.gameObject.CompareTag("little")
-            && encounteredObject.GetComponent<DragDropLittle>().targetMagnetDiscovered == false)    // this line is redundant
-        {
-            // if trying to place one circle on top of another circle, when mouse is released, bump the moved circle to the side
-            //circleOnCirclePushDirection = (transform.position - encounteredObject.gameObject.transform.position).normalized;
-            //transform.position = encounteredObject.gameObject.transform.position + circleOnCirclePushDirection;
-            transform.position = originalPosition;
-        }
-        else if (encounteredObject != null && encounteredObject.gameObject.CompareTag("big"))
+        if (encounteredObject != null && encounteredObject.gameObject.CompareTag("big"))
         {
             if (encounteredObject.GetComponent<MathOperators>().magnet1occupied == false)
             {
@@ -145,6 +139,7 @@ public class DragDropLittle : MonoBehaviour
                 tempVector3.z = defaultZposition;
                 transform.position = tempVector3;
                 encounteredObject.GetComponent<MathOperators>().magnet1occupied = true;
+                encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
                 usingWhichMagnet = 1;
                 objectMagnetizedTo = encounteredObject;
                 // now, set the circle's number value into the Big object
@@ -158,6 +153,7 @@ public class DragDropLittle : MonoBehaviour
                 tempVector3.z = defaultZposition;
                 transform.position = tempVector3;
                 encounteredObject.GetComponent<MathOperators>().magnet2occupied = true;
+                encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
                 usingWhichMagnet = 2;
                 objectMagnetizedTo = encounteredObject;
                 encounteredObject.GetComponent<MathOperators>().secondNumber = gameObject;
@@ -315,12 +311,7 @@ public class DragDropLittle : MonoBehaviour
             var goalNumber = encounteredObject.GetComponent<Goal>().goalNumber;
             if (valueOfThisThing == goalNumber && encounteredObject.GetComponent<Goal>().goalFulfilled == false)
             {
-                // destroy the circle and change the color of the goal to reflect the fact that it's been fulfilled
-                encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.1f, 0.1f, 1f);
-                // also, make this goal unable to interact with anything
-                encounteredObject.GetComponent<Goal>().goalFulfilled = true;
-                //GameManager.instance.AddPoints(1);
-                //Destroy(gameObject);
+                encounteredObject.GetComponent<Goal>().MarkGoalAsFulfilled();                
                 gameObject.SetActive(false);
             }
             else if (encounteredObject.GetComponent<Goal>().goalFulfilled == true)

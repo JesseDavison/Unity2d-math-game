@@ -22,9 +22,16 @@ public class GoToNextLevel : MonoBehaviour
 
     public void LoadLevel()
     {
-        GameManager.instance.IdentifyLowestUnsolvedLevel();
-        int lowestUnsolvedLevel = GameManager.instance.recommendedNextLevel;
-        GameManager.instance.LoadSpecificLevel(lowestUnsolvedLevel);
+        GameManager.instance.CountNumberOfLevelsCompleted();
+        if (GameManager.instance.allLevelsAreCompleted == true) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        } else {
+            GameManager.instance.IdentifyLowestUnsolvedLevel();
+            int lowestUnsolvedLevel = GameManager.instance.recommendedNextLevel;
+            GameManager.instance.LoadSpecificLevel(lowestUnsolvedLevel);
+        }
+        
+
     }
 
 

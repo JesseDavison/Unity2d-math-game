@@ -12,7 +12,7 @@ public class CameraAdjust : MonoBehaviour
 
 
     // Set this to the in-world distance between the left & right edges of your scene.
-    public float sceneWidth = 10;
+    public float sceneWidth = 7;
 
     Camera _camera;
     void Start()

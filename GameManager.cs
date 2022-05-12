@@ -8,7 +8,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public GameObject LevelSelectLoader;
+    //public GameObject LevelSelectLoader;            // this is the panel for the level select screen
 
     //public TextMeshProUGUI currentScoreText;
     //public int highestLevelCompleted = 0;
@@ -25,7 +25,9 @@ public class GameManager : MonoBehaviour
 
 
     //public int nextIncompleteLevel;
-    public int highestLevelNumberThatExists = 5;
+    // **************************************************************************************************************************************
+    int highestLevelNumberThatExists = 16;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
     public TextMeshProUGUI playLevelX;
@@ -61,18 +63,18 @@ public class GameManager : MonoBehaviour
         CountNumberOfLevelsCompleted();
         if (allLevelsAreCompleted)
         {
-            numberOfLevelsCompletedText.text = "All " + highestLevelNumberThatExists + " Levels are Solved";
+            numberOfLevelsCompletedText.text = "All " + (highestLevelNumberThatExists + 1) + " Levels are Solved";
         }
         else
         {
-            numberOfLevelsCompletedText.text = numberOfLevelsCompleted + " of " + (highestLevelNumberThatExists) + " levels completed";
+            numberOfLevelsCompletedText.text = numberOfLevelsCompleted + " of " + (highestLevelNumberThatExists + 1) + " levels completed";
         }
 
         // identify the lowest level not yet completed
         IdentifyLowestUnsolvedLevel();
         if (allLevelsAreCompleted)
         {
-            playLevelX.text = "Turn off your phone and go outside";
+            playLevelX.text = "Your training is now complete";
         }
         else
         {
@@ -88,7 +90,6 @@ public class GameManager : MonoBehaviour
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(false);
     }
-
 
 
     // Start is called before the first frame update
@@ -101,15 +102,15 @@ public class GameManager : MonoBehaviour
         // count up the number of levels completed
         CountNumberOfLevelsCompleted();
         if (allLevelsAreCompleted) {
-            numberOfLevelsCompletedText.text = "All " + highestLevelNumberThatExists + " Levels are Solved";
+            numberOfLevelsCompletedText.text = "All " + (highestLevelNumberThatExists + 1) + " Levels are Solved";
         } else {
-            numberOfLevelsCompletedText.text = numberOfLevelsCompleted + " of " + (highestLevelNumberThatExists) + " levels completed";
+            numberOfLevelsCompletedText.text = numberOfLevelsCompleted + " of " + (highestLevelNumberThatExists + 1) + " levels completed";
         }
 
         // identify the lowest level not yet completed
         IdentifyLowestUnsolvedLevel();
         if (allLevelsAreCompleted) {
-            playLevelX.text = "Turn off your phone and go outside";
+            playLevelX.text = "Your training is now complete";
         } else {
             playLevelX.text = "Play Level " + (recommendedNextLevel + 1);
         }
@@ -126,8 +127,16 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public int ReturnHighestLevelNumberThatExists() {
+        return highestLevelNumberThatExists;
+    }
+
+    public void SetHighestLevelNumberThatExists(int highest) {
+        highestLevelNumberThatExists = highest;
+    }
+
     public void IdentifyLowestUnsolvedLevel() {
-        for (int i = 0; i < highestLevelNumberThatExists; i++)
+        for (int i = 0; i <= highestLevelNumberThatExists; i++)
         {
             var tempString = (i).ToString() + "_Completed";
             var completedInt = PlayerPrefs.GetInt(tempString, 0);
@@ -141,7 +150,7 @@ public class GameManager : MonoBehaviour
 
     public void CountNumberOfLevelsCompleted() {
         numberOfLevelsCompleted = 0;
-        for (int i = 0; i < highestLevelNumberThatExists; i++)
+        for (int i = 0; i < highestLevelNumberThatExists + 1; i++)
         {
             var tempString = (i).ToString() + "_Completed";
             var completedInt = PlayerPrefs.GetInt(tempString, 0);
@@ -150,7 +159,7 @@ public class GameManager : MonoBehaviour
                 numberOfLevelsCompleted += 1;
             }
         }
-        if (numberOfLevelsCompleted == highestLevelNumberThatExists) {
+        if (numberOfLevelsCompleted == highestLevelNumberThatExists + 1) {
             // all levels are complete
             allLevelsAreCompleted = true;
         }
@@ -216,60 +225,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //public void LoadTheNextLevel() {
-    //    if (highestLevelCompleted < highestLevelNumberThatExists)
-    //    {
-
-    //        //ensure that the Menu UI is not active
-    //        menuUI.SetActive(false);
-    //        nextLevelButton.SetActive(false);
-    //        restartLevelButton.SetActive(true);
-    //        //ensure that the level components are active
-    //        goalsParent.SetActive(true);
-    //        circlesParent.SetActive(true);
-    //        bigsParent.SetActive(true);
-    //        inGameUI.SetActive(true);
-    //        levelSelectUI.SetActive(false);
-
-    //        //highestLevelCompletedText.text = PlayerPrefs.GetInt("highestLevelCompleted", 0).ToString() + " of 100 levels completed";
-    //        //playLevelX.text = "Play Level " + (PlayerPrefs.GetInt("highestLevelCompleted", 0) + 1).ToString();
-    //        currentLevelNumber = highestLevelCompleted + 1;
-    //        repOfLevels.GoToLevel(highestLevelCompleted + 1);
-    //    }
-    //    else
-    //    {
-    //        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //        //highestLevelCompletedText.text = PlayerPrefs.GetInt("highestLevelCompleted", 0).ToString() + " of 100 levels completed";
-    //        //playLevelX.text = "Play Level " + (PlayerPrefs.GetInt("highestLevelCompleted", 0) + 1).ToString();
-    //    }
-    //}
-
-    //public void LoadTheHighestLevel() {
-
-    //    if (currentLevelNumber < highestLevelNumberThatExists) {
-    //        currentLevelNumber += 1;
-            
-    //        //ensure that the Menu UI is not active
-    //        menuUI.SetActive(false);
-    //        nextLevelButton.SetActive(false);
-    //        restartLevelButton.SetActive(true);
-    //        //ensure that the level components are active
-    //        goalsParent.SetActive(true);
-    //        circlesParent.SetActive(true);
-    //        bigsParent.SetActive(true);
-    //        inGameUI.SetActive(true);
-    //        levelSelectUI.SetActive(false);
-
-    //        //highestLevelCompletedText.text = PlayerPrefs.GetInt("highestLevelCompleted", 0).ToString() + " of 100 levels completed";
-    //        //playLevelX.text = "Play Level " + (PlayerPrefs.GetInt("highestLevelCompleted", 0) + 1).ToString();
-
-    //        repOfLevels.GoToLevel(currentLevelNumber);
-    //    } else {
-    //        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //        //highestLevelCompletedText.text = PlayerPrefs.GetInt("highestLevelCompleted", 0).ToString() + " of 100 levels completed";
-    //        //playLevelX.text = "Play Level " + (PlayerPrefs.GetInt("highestLevelCompleted", 0) + 1).ToString();
-    //    }
-    //}
 
     public void LoadSpecificLevel(int level) {
         menuUI.SetActive(false);

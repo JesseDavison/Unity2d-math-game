@@ -32,6 +32,12 @@ public class Goal : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().color = originalColor;
     }
 
+    public void MarkGoalAsFulfilled() {
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(0.9f, 0.1f, 0.1f, 1f);
+        // also, make this goal unable to interact with anything
+        //gameObject.GetComponent<Goal>().goalFulfilled = true;
+        goalFulfilled = true;
+    }
 
 
 

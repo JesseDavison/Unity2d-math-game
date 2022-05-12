@@ -27,7 +27,9 @@ public class Levels : MonoBehaviour
     public GameObject big4;
     public GameObject big5;
     public GameObject big6;
+    public Sprite squareRootSprite;
     public List<GameObject> bigsList;
+
 
     public GameObject goal1;
     public GameObject goal2;
@@ -530,6 +532,12 @@ public class Levels : MonoBehaviour
         var bigScript = bigGameObject.GetComponent<MathOperators>();
         var bigText = bigGameObject.transform.GetChild(0).GetComponent<TextMeshPro>();
 
+        bigGameObject.transform.Find("squareRootImage").gameObject.SetActive(false);
+        bigGameObject.transform.Find("CubeRoot3").gameObject.SetActive(false);
+        bigGameObject.transform.Find("exponent2").gameObject.SetActive(false);
+        bigGameObject.transform.Find("exponent3").gameObject.SetActive(false);
+        bigGameObject.transform.Find("exponent4").gameObject.SetActive(false);
+
         bigScript.whatMathDoesThisThingDo = operation;
         //if (operation == "nullBaby") {
         //    Debug.Log("we caught a null baby");
@@ -567,7 +575,8 @@ public class Levels : MonoBehaviour
             bigScript.magnet2occupied = false;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "exponent2") {
-            bigText.text = "^2";
+            bigText.text = "";
+            bigGameObject.transform.Find("exponent2").gameObject.SetActive(true);
             bigGameObject.tag = "big";
             bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
             bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
@@ -575,7 +584,8 @@ public class Levels : MonoBehaviour
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "exponent3") {
-            bigText.text = "^3";
+            bigText.text = "";
+            bigGameObject.transform.Find("exponent3").gameObject.SetActive(true);
             bigGameObject.tag = "big";
             bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
             bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
@@ -583,7 +593,8 @@ public class Levels : MonoBehaviour
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "exponent4") {
-            bigText.text = "^4";
+            bigText.text = "";
+            bigGameObject.transform.Find("exponent4").gameObject.SetActive(true);
             bigGameObject.tag = "big";
             bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
             bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
@@ -591,7 +602,13 @@ public class Levels : MonoBehaviour
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "squareRoot") {
-            bigText.text = "^(1/2)";
+            bigText.text = "";
+            bigGameObject.transform.Find("squareRootImage").gameObject.SetActive(true);
+            
+            // change the magnet location
+
+          
+
             bigGameObject.tag = "big";
             bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
             bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
@@ -599,7 +616,9 @@ public class Levels : MonoBehaviour
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "cubeRoot") {
-            bigText.text = "^(1/3)";
+            bigText.text = "";
+            bigGameObject.transform.Find("squareRootImage").gameObject.SetActive(true);
+            bigGameObject.transform.Find("CubeRoot3").gameObject.SetActive(true);
             bigGameObject.tag = "big";
             bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
             bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
@@ -805,7 +824,7 @@ public class Levels : MonoBehaviour
         GameManager.instance.scoreAtStartOfLevel = GameManager.instance.currentScore;
         GameManager.instance.currentLevelText.text = "Level " + (level + 1).ToString();
         GameManager.instance.currentLevelNumber = level;
-        CreateLevel(level);
+        CreateLevel(level, true);
     }
 
     public void RestartLevel() {
@@ -814,14 +833,14 @@ public class Levels : MonoBehaviour
         ResetNormalCirclesAndBigs();
         GameManager.instance.currentScore = GameManager.instance.scoreAtStartOfLevel;
         //GameManager.instance.AddPoints(0);
-        CreateLevel(currentLevel);
+        CreateLevel(currentLevel, true);
     }
 
-    public void CreateLevel(int levelNumber) {
+    public void CreateLevel(int levelNumber, bool ifRandomThenTrue) {
         //Debug.Log("started CreateLevel fuction");
         var levelInfo = new ArrayList();
         // grab the level info from LevelDefinitions, then parse it and start the level
-        levelInfo = LevelDefinitions(levelNumber);
+        levelInfo = LevelDefinitions(levelNumber, ifRandomThenTrue);
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
@@ -874,11 +893,12 @@ public class Levels : MonoBehaviour
         }
         for (int i = 0; i < 6; i++) {
             bigsList[i].GetComponent<MathOperators>().ResetBig();
+            bigsList[i].GetComponent<ColorFlux>().PossiblyStartColorFlux();
         }
     }
 
 
-    public ArrayList LevelDefinitions(int levelNumber) {        // https://answers.unity.com/questions/524128/c-adding-multiple-elements-to-a-list-on-one-line.html
+    public ArrayList LevelDefinitions(int levelNumber, bool ifRandomThenTrue) {        // https://answers.unity.com/questions/524128/c-adding-multiple-elements-to-a-list-on-one-line.html
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
@@ -898,6 +918,25 @@ public class Levels : MonoBehaviour
                 goals.Add(list[i]);
             }
         }
+        void RandomizeIntList(List<int> sourceList, List<int> destinationList) {
+            int lengthOfSource = sourceList.Count;
+            int randomNumber = Random.Range(0, lengthOfSource);
+            destinationList.Add(sourceList[randomNumber]);
+            sourceList.RemoveAt(randomNumber);
+            if (sourceList.Count > 0) {
+                RandomizeIntList(sourceList, destinationList);
+            }
+        }
+        void RandomizeStringList(List<string> sourceList, List<string> destinationList) {
+            int lengthOfSource = sourceList.Count;
+            int randomNumber = Random.Range(0, lengthOfSource);
+            destinationList.Add(sourceList[randomNumber]);
+            sourceList.RemoveAt(randomNumber);
+            if (sourceList.Count > 0) {
+                RandomizeStringList(sourceList, destinationList);
+            }
+        }
+
 
 
         switch (levelNumber) {
@@ -906,44 +945,98 @@ public class Levels : MonoBehaviour
                 AddToBigsList("exponent2");
                 AddToGoalsList(49); break;
             case 1:
-                AddToCirclesList(6, 2);
-                AddToBigsList("division", "split3");
-                AddToGoalsList(1, 1, 1); break;
+                AddToCirclesList(6, 2, 3);
+                AddToBigsList("division", "division");
+                AddToGoalsList(1); break;
             case 2:
-                AddToCirclesList(6, 5, 4, 3);
-                AddToBigsList("exponent2", "exponent2", "exponent2", "exponent2");
-                AddToGoalsList(36, 25, 16, 9); break;
+                AddToCirclesList(6, 5, 4);
+                AddToBigsList("exponent2", "exponent2", "exponent2");
+                AddToGoalsList(36, 25, 16); break;
             case 3:
-                AddToCirclesList(10, 10, 2, 2, 2);
-                AddToBigsList("addition", "division", "addition", "squareRoot");
-                AddToGoalsList(2, 10); break;
+                AddToCirclesList(4, 6, 5);
+                AddToBigsList("exponent4", "squareRoot", "subtraction", "division");
+                AddToGoalsList(2); break;
             case 4:
-                AddToCirclesList(64, 7, 7, 14, 2);
-                AddToBigsList("cubeRoot", "division", "split2");
-                AddToGoalsList(7, 2, 7, 2, 7); break;
+                AddToCirclesList(10, 10, 8, 2, 8);
+                AddToBigsList("addition", "division", "addition", "squareRoot");
+                AddToGoalsList(4, 10); break;
             case 5:
+                AddToCirclesList(64, 14, 2, 2);
+                AddToBigsList("cubeRoot", "division", "division");
+                AddToGoalsList(2, 7); break;
+            case 6:
                 AddToCirclesList(9, 13);
                 AddToBigsList("squareRoot", "split3", "addition", "division", "addition");
                 AddToGoalsList(7); break;
+            case 7:
+                AddToCirclesList(1, 3, 6, 21);
+                AddToBigsList("split3", "multiplication", "multiplication", "multiplication", "addition", "multiplication");
+                AddToGoalsList(21); break;
+            case 8:
+                AddToCirclesList(5, 10, 2, 1);
+                AddToBigsList("subtraction", "division", "multiplication");
+                AddToGoalsList(24); break;
+            case 9:
+                AddToCirclesList(9, 4, 3, 3, 4);
+                AddToBigsList("multiplication", "addition", "division", "addition");
+                AddToGoalsList(17); break;
+            case 10:
+                AddToCirclesList(9, 3, 4);
+                AddToBigsList("multiplication", "subtraction");
+                AddToGoalsList(23); break;
+            case 11:
+                AddToCirclesList(19, 15, 3, 5);
+                AddToBigsList("multiplication", "division", "division");
+                AddToGoalsList(19); break;
+            case 12:
+                AddToCirclesList(5, 3);
+                AddToBigsList("addition", "cubeRoot");
+                AddToGoalsList(2); break;
+            case 13:
+                AddToCirclesList(17, 1);
+                AddToBigsList("subtraction", "split4", "division", "addition");
+                AddToGoalsList(1, 8); break;
+            case 14:
+                AddToCirclesList(30);
+                AddToBigsList("split5", "division", "subtraction", "addition", "multiplication");
+                AddToGoalsList(60); break;
+            case 15:
+                AddToCirclesList(21);
+                AddToBigsList("split3", "multiplication", "addition", "split4", "division");
+                AddToGoalsList(14, 1, 14); break;
+            case 16:
+                AddToCirclesList(1, 3);
+                AddToBigsList("exponent4", "addition", "split2");
+                AddToGoalsList(41, 41); break;
 
             //case X:
             //    AddToCirclesList();
             //    AddToBigsList();
             //    AddToGoalsList(); break;
-
-
             default:
-                // ran out of levels, so go back to the last level that exists
-
                 break;
             // don't forget to change highestLevelNumberThatExists in the GameManager file
         }
 
-
         ArrayList toReturn = new ArrayList();
-        toReturn.Add(circles);
-        toReturn.Add(bigs);
-        toReturn.Add(goals);
+        if (ifRandomThenTrue == true) {
+            List<int> randomizedCircles = new List<int>();
+            RandomizeIntList(circles, randomizedCircles);
+            toReturn.Add(randomizedCircles);
+
+            List<string> randomizedBigs = new List<string>();
+            RandomizeStringList(bigs, randomizedBigs);
+            toReturn.Add(randomizedBigs);
+
+            //List<int> randomizedGoals = new List<int>();
+            //RandomizeIntList(goals, randomizedGoals);
+            //toReturn.Add(randomizedGoals);
+            toReturn.Add(goals);
+        } else {
+            toReturn.Add(circles);
+            toReturn.Add(bigs);
+            toReturn.Add(goals);
+        }
         toReturn.Add(levelNumber);
 
         return toReturn;

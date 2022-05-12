@@ -116,6 +116,7 @@ public class MathOperators : MonoBehaviour
     public void ResetBig() {
         magnet1occupied = false;
         magnet2occupied = false;
+        gameObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
         firstNumber = null;
         secondNumber = null;
 }

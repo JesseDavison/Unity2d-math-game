@@ -22,6 +22,11 @@ public class LevelSelectScreenButton : MonoBehaviour
         GameManager.instance.LoadSpecificLevel(levelToStart - 1);
     }
 
+    public void ChangeLevelSelectButtonColorToCompleted() {
+        //gameObject.GetComponentInChildren<TextMeshProUGUI>().color = new Color(.95f, .1f, .1f, 1);      // dark red
+        gameObject.GetComponentInChildren<TextMeshProUGUI>().color = new Color(.3f, .3f, .3f, 1);      // dark grey
+    }
+
 
 
 }
