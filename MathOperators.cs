@@ -32,7 +32,7 @@ public class MathOperators : MonoBehaviour
     //public float fourthNumberValue;
     //public float fifthNumberValue;
 
-    public int splitHowManyWays = 2;
+    public int splitHowManyWays;
 
     public Vector3 spawnPoint1;
     public Vector3 spawnPoint2;
@@ -82,13 +82,22 @@ public class MathOperators : MonoBehaviour
                 }
 
                 // if it's an integer, don't have 2 decimal places... otherwise, do have 2 decimal places
-                if (result % 1 == 0)
+                var marginOfError = 0.001f;
+                if ((result - Mathf.Floor(result)) < marginOfError) {
+                    // we want the Floor value
+                    //Debug.Log("We want the FLOOR value");
+                    newNum.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Floor(result);
+                    newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Floor(result).ToString("F0");
+                } else if ((Mathf.Ceil(result) - result) < marginOfError) {
+                    // we want the Ceiling value
+                    //Debug.Log("We want the CEILING value");
+                    newNum.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Ceil(result);
+                    newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Ceil(result).ToString("F0");
+                } else if (result % 1 == 0)
                 {
                     newNum.GetComponent<DragDropLittle>().valueOfThisThing = result;
                     newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F0");
-                }
-                else
-                {
+                } else {
                     newNum.GetComponent<DragDropLittle>().valueOfThisThing = result;
                     newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F2");
                 }
@@ -102,14 +111,8 @@ public class MathOperators : MonoBehaviour
                 if (secondNumber != null) {
                     secondNumber.SetActive(false);
                 }
-                
-
-
                 gameObject.SetActive(false);
-
-
             }
-
         }
     }
 

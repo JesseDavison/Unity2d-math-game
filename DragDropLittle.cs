@@ -434,6 +434,7 @@ public class DragDropLittle : MonoBehaviour
         else if (collision.gameObject.CompareTag("goal") && collision.GetComponent<Goal>().goalFulfilled == false)
         {
             collision.GetComponent<SpriteRenderer>().color = goalColor;
+            encounteredObject = null;
         } 
         else if (collision.gameObject.CompareTag("little")) 
         { 

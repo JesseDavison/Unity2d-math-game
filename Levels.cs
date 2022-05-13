@@ -27,7 +27,6 @@ public class Levels : MonoBehaviour
     public GameObject big4;
     public GameObject big5;
     public GameObject big6;
-    public Sprite squareRootSprite;
     public List<GameObject> bigsList;
 
 
@@ -38,6 +37,10 @@ public class Levels : MonoBehaviour
     public GameObject goal5;
     public List<GameObject> goalsList;
 
+    public GameObject showHintButton;
+    public GameObject hint1;
+    public List<GameObject> hintsList;
+
     public GameObject InstantiatedCirclesParent;
 
     public List<string> difficultyLevels;
@@ -47,13 +50,14 @@ public class Levels : MonoBehaviour
     int numberOfCircles;
     int numberOfBigs;
     int numberOfGoals;
+    int numberOfHints;
 
     static int circleZvalue = 1;
     static int bigZvalue = 19;
     static int goalZvalue = 20;
 
-    static float circle_TopRowY = 3.7f;
-    static float circle_BotRowY = 2.4f;
+    static float circle_TopRowY = 4.5f;
+    static float circle_BotRowY = 3.1f;
 
     static float _5CirclesSpacingX = 1.2f;
 
@@ -64,12 +68,20 @@ public class Levels : MonoBehaviour
 
     static float _2CirclesMidOffset = 0.8f;
 
-    static float _3BigsOffset = 2.2f;
-    static float big_TopRowY = 0;
-    static float big_BotRowY = -2.5f;
+    static float big_RowY1 = 1.2f;
+    static float big_RowY2 = 0.075f;
+    static float big_RowY3 = -1.05f;
+    static float big_RowY4 = -2.175f;
+    static float big_RowY5 = -3.3f;
+
+    static float big_ColX1 = -1.5f;
+    static float big_ColX3 = 1.5f;
 
 
-    static Vector3 magnetOffset = new Vector3(0, 0.7f, 0);
+    //static Vector3 magnetOffset = new Vector3(0, 0.7f, 0);
+    static Vector3 big_LeftRightMagnetOffset = new Vector3(0.6f, 0, 0);
+    static Vector3 big_ExponentOffset = new Vector3(-0.1f, -0.1f, 0);
+    static Vector3 big_RootOffset = new Vector3(0.05f, -0.1f, 0);
 
     private void Start()
     {
@@ -96,12 +108,12 @@ public class Levels : MonoBehaviour
         goalsList.Add(goal3);
         goalsList.Add(goal4);
         goalsList.Add(goal5);
+        hintsList.Add(hint1);
         difficultyLevels.Add("easy");
         difficultyLevels.Add("medium");
         difficultyLevels.Add("hard");
         difficultyLevels.Add("expert");
     }
-
 
     public void setCirclesInPlace(int numberOfCircles) { 
         switch (numberOfCircles) {
@@ -442,7 +454,7 @@ public class Levels : MonoBehaviour
     public void setBigsInPlace(int numberOfBigs) { 
         switch (numberOfBigs) {
             case 1:
-                big1.transform.position = new Vector3(0, big_TopRowY, bigZvalue);
+                big1.transform.position = new Vector3(0, big_RowY3, bigZvalue);
                 big2.transform.position = new Vector3(0, 0, bigZvalue);
                 big3.transform.position = new Vector3(0, 0, bigZvalue);
                 big4.transform.position = new Vector3(0, 0, bigZvalue);
@@ -456,8 +468,8 @@ public class Levels : MonoBehaviour
                 big6.SetActive(false);
                 break;
             case 2:
-                big1.transform.position = new Vector3(-1.5f, big_TopRowY, bigZvalue);
-                big2.transform.position = new Vector3(1.5f, big_TopRowY, bigZvalue);
+                big1.transform.position = new Vector3(0, big_RowY2, bigZvalue);
+                big2.transform.position = new Vector3(0, big_RowY4, bigZvalue);
                 big3.transform.position = new Vector3(0, 0, bigZvalue);
                 big4.transform.position = new Vector3(0, 0, bigZvalue);
                 big5.transform.position = new Vector3(0, 0, bigZvalue);
@@ -470,9 +482,9 @@ public class Levels : MonoBehaviour
                 big6.SetActive(false);
                 break;
             case 3:
-                big1.transform.position = new Vector3(0, big_TopRowY, bigZvalue);
-                big2.transform.position = new Vector3(_3BigsOffset * -1, big_BotRowY, bigZvalue);
-                big3.transform.position = new Vector3(_3BigsOffset * 1, big_BotRowY, bigZvalue);
+                big1.transform.position = new Vector3(0, big_RowY2, bigZvalue);
+                big2.transform.position = new Vector3(big_ColX1, big_RowY4, bigZvalue);
+                big3.transform.position = new Vector3(big_ColX3, big_RowY4, bigZvalue);
                 big4.transform.position = new Vector3(0, 0, bigZvalue);
                 big5.transform.position = new Vector3(0, 0, bigZvalue);
                 big6.transform.position = new Vector3(0, 0, bigZvalue);
@@ -484,10 +496,10 @@ public class Levels : MonoBehaviour
                 big6.SetActive(false);
                 break;
             case 4:
-                big1.transform.position = new Vector3(-1.5f, big_TopRowY, bigZvalue);
-                big2.transform.position = new Vector3(1.5f, big_TopRowY, bigZvalue);
-                big3.transform.position = new Vector3(-1.5f, big_BotRowY, bigZvalue);
-                big4.transform.position = new Vector3(1.5f, big_BotRowY, bigZvalue);
+                big1.transform.position = new Vector3(big_ColX1, big_RowY2, bigZvalue);
+                big2.transform.position = new Vector3(big_ColX3, big_RowY2, bigZvalue);
+                big3.transform.position = new Vector3(big_ColX1, big_RowY4, bigZvalue);
+                big4.transform.position = new Vector3(big_ColX3, big_RowY4, bigZvalue);
                 big5.transform.position = new Vector3(0, 0, bigZvalue);
                 big6.transform.position = new Vector3(0, 0, bigZvalue);
                 big1.SetActive(true);
@@ -498,11 +510,11 @@ public class Levels : MonoBehaviour
                 big6.SetActive(false);
                 break;
             case 5:
-                big1.transform.position = new Vector3(_3BigsOffset * -1, big_TopRowY, bigZvalue);
-                big2.transform.position = new Vector3(_3BigsOffset * 0, big_TopRowY, bigZvalue);
-                big3.transform.position = new Vector3(_3BigsOffset * 1, big_TopRowY, bigZvalue);
-                big4.transform.position = new Vector3(-1.5f, big_BotRowY, bigZvalue);
-                big5.transform.position = new Vector3(1.5f, big_BotRowY, bigZvalue);
+                big1.transform.position = new Vector3(0, big_RowY1, bigZvalue);
+                big2.transform.position = new Vector3(big_ColX1, big_RowY3, bigZvalue);
+                big3.transform.position = new Vector3(big_ColX3, big_RowY3, bigZvalue);
+                big4.transform.position = new Vector3(big_ColX1, big_RowY5, bigZvalue);
+                big5.transform.position = new Vector3(big_ColX3, big_RowY5, bigZvalue);
                 big6.transform.position = new Vector3(0, 0, bigZvalue);
                 big1.SetActive(true);
                 big2.SetActive(true);
@@ -512,12 +524,12 @@ public class Levels : MonoBehaviour
                 big6.SetActive(false);
                 break;
             case 6:
-                big1.transform.position = new Vector3(_3BigsOffset * -1, big_TopRowY, bigZvalue);
-                big2.transform.position = new Vector3(_3BigsOffset * 0, big_TopRowY, bigZvalue);
-                big3.transform.position = new Vector3(_3BigsOffset * 1, big_TopRowY, bigZvalue);
-                big4.transform.position = new Vector3(_3BigsOffset * -1, big_BotRowY, bigZvalue);
-                big5.transform.position = new Vector3(_3BigsOffset * 0, big_BotRowY, bigZvalue);
-                big6.transform.position = new Vector3(_3BigsOffset * 1, big_BotRowY, bigZvalue);
+                big1.transform.position = new Vector3(big_ColX1, big_RowY1, bigZvalue);
+                big2.transform.position = new Vector3(big_ColX3, big_RowY1, bigZvalue);
+                big3.transform.position = new Vector3(big_ColX1, big_RowY3, bigZvalue);
+                big4.transform.position = new Vector3(big_ColX3, big_RowY3, bigZvalue);
+                big5.transform.position = new Vector3(big_ColX1, big_RowY5, bigZvalue);
+                big6.transform.position = new Vector3(big_ColX3, big_RowY5, bigZvalue);
                 big1.SetActive(true);
                 big2.SetActive(true);
                 big3.SetActive(true);
@@ -545,32 +557,32 @@ public class Levels : MonoBehaviour
         if (operation == "addition") {
             bigText.text = "+";
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position - big_LeftRightMagnetOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position + big_LeftRightMagnetOffset;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = false;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "subtraction") {
             bigText.text = "-";
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position - big_LeftRightMagnetOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position + big_LeftRightMagnetOffset;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = false;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "multiplication") {
             bigText.text = "*";
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position - big_LeftRightMagnetOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position + big_LeftRightMagnetOffset;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = false;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "division") {
             bigText.text = "/";
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position - big_LeftRightMagnetOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position + big_LeftRightMagnetOffset;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = false;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
@@ -578,8 +590,8 @@ public class Levels : MonoBehaviour
             bigText.text = "";
             bigGameObject.transform.Find("exponent2").gameObject.SetActive(true);
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position + big_ExponentOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
@@ -587,8 +599,8 @@ public class Levels : MonoBehaviour
             bigText.text = "";
             bigGameObject.transform.Find("exponent3").gameObject.SetActive(true);
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position + big_ExponentOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
@@ -596,22 +608,17 @@ public class Levels : MonoBehaviour
             bigText.text = "";
             bigGameObject.transform.Find("exponent4").gameObject.SetActive(true);
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position + big_ExponentOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
         } else if (operation == "squareRoot") {
             bigText.text = "";
             bigGameObject.transform.Find("squareRootImage").gameObject.SetActive(true);
-            
-            // change the magnet location
-
-          
-
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position + big_RootOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
@@ -620,8 +627,8 @@ public class Levels : MonoBehaviour
             bigGameObject.transform.Find("squareRootImage").gameObject.SetActive(true);
             bigGameObject.transform.Find("CubeRoot3").gameObject.SetActive(true);
             bigGameObject.tag = "big";
-            bigScript.selfMagnet1 = bigGameObject.transform.position + magnetOffset;
-            bigScript.selfMagnet2 = bigGameObject.transform.position - magnetOffset;
+            bigScript.selfMagnet1 = bigGameObject.transform.position + big_RootOffset;
+            bigScript.selfMagnet2 = bigGameObject.transform.position;
             bigScript.magnet1occupied = false;
             bigScript.magnet2occupied = true;
             bigScript.spawnPoint1 = bigGameObject.transform.position;
@@ -629,32 +636,34 @@ public class Levels : MonoBehaviour
             bigText.text = "split 2";
             bigGameObject.tag = "breaker";
             bigScript.splitHowManyWays = 2;
-            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-0.5f, 0, 1);
-            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(0.5f, 0, 1);
+            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-0.51f, 0, 1);
+            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(0.51f, 0, 1);
         } else if (operation == "split3") {
             bigText.text = "split 3";
             bigGameObject.tag = "breaker";
             bigScript.splitHowManyWays = 3;
             bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(0, 0.5f, 1);
-            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(-0.5f, -0.4f, 1);
-            bigScript.spawnPoint3 = bigGameObject.transform.position + new Vector3(0.5f, -0.4f, 1);
+            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(-0.51f, -0.4f, 1);
+            bigScript.spawnPoint3 = bigGameObject.transform.position + new Vector3(0.51f, -0.4f, 1);
         } else if (operation == "split4") {
             bigText.text = "split 4";
             bigGameObject.tag = "breaker";
             bigScript.splitHowManyWays = 4;
-            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-0.5f, 0.5f, 1);
-            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(0.5f, 0.5f, 1);
-            bigScript.spawnPoint3 = bigGameObject.transform.position + new Vector3(-0.5f, -0.5f, 1);
-            bigScript.spawnPoint4 = bigGameObject.transform.position + new Vector3(0.5f, -0.5f, 1);
+            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-0.51f, 0.51f, 1);
+            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(0.51f, 0.51f, 1);
+            bigScript.spawnPoint3 = bigGameObject.transform.position + new Vector3(-0.51f, -0.51f, 1);
+            bigScript.spawnPoint4 = bigGameObject.transform.position + new Vector3(0.51f, -0.51f, 1);
         } else if (operation == "split5") {
             bigText.text = "split 5";
             bigGameObject.tag = "breaker";
             bigScript.splitHowManyWays = 5;
-            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-0.5f, 0.9f, 1);
-            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(0.5f, 0.9f, 1);
+            var xOffset = 0.87f;
+            var yOffset = 0.51f;
+            bigScript.spawnPoint1 = bigGameObject.transform.position + new Vector3(-xOffset, yOffset, 1);
+            bigScript.spawnPoint2 = bigGameObject.transform.position + new Vector3(xOffset, yOffset, 1);
             bigScript.spawnPoint3 = bigGameObject.transform.position;
-            bigScript.spawnPoint4 = bigGameObject.transform.position + new Vector3(-0.5f, -0.9f, 1);
-            bigScript.spawnPoint5 = bigGameObject.transform.position + new Vector3(0.5f, -0.9f, 1);
+            bigScript.spawnPoint4 = bigGameObject.transform.position + new Vector3(-xOffset, -yOffset, 1);
+            bigScript.spawnPoint5 = bigGameObject.transform.position + new Vector3(xOffset, -yOffset, 1);
         }
 
 
@@ -818,6 +827,20 @@ public class Levels : MonoBehaviour
 
     }
 
+    public void setHintsInPlace(int numberOfHints) { 
+        // it's already in place in Unity
+    }
+
+    public void assignTextToHints(GameObject hintGameObject, string text) {
+        //var hintText = hintGameObject.transform.GetChild(0).GetComponent<TextMeshPro>();
+        //hintText.text = text;
+        //hintGameObject.SetActive(true);
+
+        hint1.transform.GetChild(0).GetComponent<TextMeshPro>().text = text;
+        //hint1.SetActive(true);
+
+    }
+
     public void GoToLevel(int level) {
         DeleteInstantiatedCircles();
         ResetNormalCirclesAndBigs();
@@ -844,9 +867,11 @@ public class Levels : MonoBehaviour
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
+        List<string> hints = new List<string>();
         circles = (List<int>)levelInfo[0];
         bigs = (List<string>)levelInfo[1];
         goals = (List<int>)levelInfo[2];
+        hints = (List<string>)levelInfo[3];
 
         numberOfCircles = circles.Count;
         //Debug.Log("numberOfCircles: " + numberOfCircles);
@@ -878,6 +903,13 @@ public class Levels : MonoBehaviour
             assignValuesToGoals(goalsList[i], goals[i]);
             //goalsList[i].gameObject.GetComponent<Goal>().SetToOriginalColor();
         }
+
+        numberOfHints = hints.Count;
+        setHintsInPlace(numberOfHints);
+        for (int i = 0; i < numberOfHints; i++) {
+            assignTextToHints(hintsList[i], hints[i]);
+        }
+        showHintButton.SetActive(true);
     }
 
     public void DeleteInstantiatedCircles() {
@@ -902,6 +934,7 @@ public class Levels : MonoBehaviour
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
+        List<string> hints = new List<string>();
 
         void AddToCirclesList(params int[] list) {
             for (int i = 0; i < list.Length; i++) {
@@ -916,6 +949,11 @@ public class Levels : MonoBehaviour
         void AddToGoalsList(params int[] list) { 
             for (int i = 0; i < list.Length; i++) {
                 goals.Add(list[i]);
+            }
+        }
+        void AddHints(params string[] list) {
+            for (int i = 0; i < list.Length; i++) {
+                hints.Add(list[i]);
             }
         }
         void RandomizeIntList(List<int> sourceList, List<int> destinationList) {
@@ -943,76 +981,122 @@ public class Levels : MonoBehaviour
             case 0:
                 AddToCirclesList(7);
                 AddToBigsList("exponent2");
-                AddToGoalsList(49); break;
+                AddToGoalsList(49);
+                AddHints("HINT: 7 squared = 7 * 7"); break;
             case 1:
                 AddToCirclesList(6, 2, 3);
                 AddToBigsList("division", "division");
-                AddToGoalsList(1); break;
+                AddToGoalsList(1);
+                AddHints("HINT: start with 6"); break;
             case 2:
                 AddToCirclesList(6, 5, 4);
                 AddToBigsList("exponent2", "exponent2", "exponent2");
-                AddToGoalsList(36, 25, 16); break;
+                AddToGoalsList(36, 25, 16);
+                AddHints("HINT: drink more water"); break;
             case 3:
                 AddToCirclesList(4, 6, 5);
                 AddToBigsList("exponent4", "squareRoot", "subtraction", "division");
-                AddToGoalsList(2); break;
+                AddToGoalsList(2);
+                AddHints("HINT: get a 10"); break;
             case 4:
                 AddToCirclesList(10, 10, 8, 2, 8);
                 AddToBigsList("addition", "division", "addition", "squareRoot");
-                AddToGoalsList(4, 10); break;
+                AddToGoalsList(4, 10);
+                AddHints("HINT: the tens are redundant"); break;
             case 5:
                 AddToCirclesList(64, 14, 2, 2);
                 AddToBigsList("cubeRoot", "division", "division");
-                AddToGoalsList(2, 7); break;
+                AddToGoalsList(2, 7);
+                AddHints("HINT: denominator twos"); break;
             case 6:
                 AddToCirclesList(9, 13);
                 AddToBigsList("squareRoot", "split3", "addition", "division", "addition");
-                AddToGoalsList(7); break;
+                AddToGoalsList(7);
+                AddHints("HINT: everyone has a plus"); break;
             case 7:
                 AddToCirclesList(1, 3, 6, 21);
                 AddToBigsList("split3", "multiplication", "multiplication", "multiplication", "addition", "multiplication");
-                AddToGoalsList(21); break;
+                AddToGoalsList(21);
+                AddHints("HINT: Find one-third of 21"); break;
             case 8:
                 AddToCirclesList(5, 10, 2, 1);
                 AddToBigsList("subtraction", "division", "multiplication");
-                AddToGoalsList(24); break;
+                AddToGoalsList(24);
+                AddHints("HINT: multiply first"); break;
             case 9:
                 AddToCirclesList(9, 4, 3, 3, 4);
                 AddToBigsList("multiplication", "addition", "division", "addition");
-                AddToGoalsList(17); break;
+                AddToGoalsList(17);
+                AddHints("HINT: 39"); break;
             case 10:
                 AddToCirclesList(9, 3, 4);
                 AddToBigsList("multiplication", "subtraction");
-                AddToGoalsList(23); break;
+                AddToGoalsList(23);
+                AddHints("HINT: 27 - 4 = 23"); break;
             case 11:
                 AddToCirclesList(19, 15, 3, 5);
                 AddToBigsList("multiplication", "division", "division");
-                AddToGoalsList(19); break;
+                AddToGoalsList(19);
+                AddHints("HINT: it's just 19"); break;
             case 12:
                 AddToCirclesList(5, 3);
                 AddToBigsList("addition", "cubeRoot");
-                AddToGoalsList(2); break;
+                AddToGoalsList(2);
+                AddHints("HINT: plus first"); break;
             case 13:
                 AddToCirclesList(17, 1);
                 AddToBigsList("subtraction", "split4", "division", "addition");
-                AddToGoalsList(1, 8); break;
+                AddToGoalsList(1, 8);
+                AddHints("HINT: try for four fours"); break;
             case 14:
                 AddToCirclesList(30);
                 AddToBigsList("split5", "division", "subtraction", "addition", "multiplication");
-                AddToGoalsList(60); break;
+                AddToGoalsList(60);
+                AddHints("HINT: 6 - 1"); break;
             case 15:
                 AddToCirclesList(21);
                 AddToBigsList("split3", "multiplication", "addition", "split4", "division");
-                AddToGoalsList(14, 1, 14); break;
+                AddToGoalsList(14, 1, 14);
+                AddHints("HINT: 56"); break;
             case 16:
                 AddToCirclesList(1, 3);
                 AddToBigsList("exponent4", "addition", "split2");
-                AddToGoalsList(41, 41); break;
+                AddToGoalsList(41, 41);
+                AddHints("HINT: 81"); break;
+            case 17:
+                AddToCirclesList(2, 1);
+                AddToBigsList("squareRoot", "exponent4", "addition", "exponent2");
+                AddToGoalsList(25);
+                AddHints("HINT: exponentiate first"); break;
+            case 18:
+                AddToCirclesList(14, 4);
+                AddToBigsList("split2", "division", "split2", "division", "subtraction");
+                AddToGoalsList(1);
+                AddHints("HINT: split the 4"); break;
+            case 19:
+                AddToCirclesList(8, 5, 6, 4);
+                AddToBigsList("addition", "multiplication", "split2", "subtraction", "division");
+                AddToGoalsList(17);
+                AddHints("HINT: 55 - 4"); break;
+            case 20:
+                AddToCirclesList(20, 7, 1, 6);
+                AddToBigsList("exponent2", "split2", "addition", "addition", "subtraction", "division");
+                AddToGoalsList(1);
+                AddHints("HINT: 17 is the key"); break;
+            case 21:
+                AddToCirclesList(11, 4, 1, 16);
+                AddToBigsList("exponent2", "squareRoot", "subtraction", "multiplication", "split5", "addition");
+                AddToGoalsList(1, 2, 1, 2, 1);
+                AddHints("HINT: multiply, subtract, then split5"); break;
+
+
+
 
             //case X:
             //    AddToCirclesList();
             //    AddToBigsList();
-            //    AddToGoalsList(); break;
+            //    AddToGoalsList();
+            //    AddHints("HINT: ); break;
             default:
                 break;
             // don't forget to change highestLevelNumberThatExists in the GameManager file
@@ -1027,15 +1111,13 @@ public class Levels : MonoBehaviour
             List<string> randomizedBigs = new List<string>();
             RandomizeStringList(bigs, randomizedBigs);
             toReturn.Add(randomizedBigs);
-
-            //List<int> randomizedGoals = new List<int>();
-            //RandomizeIntList(goals, randomizedGoals);
-            //toReturn.Add(randomizedGoals);
             toReturn.Add(goals);
+            toReturn.Add(hints);
         } else {
             toReturn.Add(circles);
             toReturn.Add(bigs);
             toReturn.Add(goals);
+            toReturn.Add(hints);
         }
         toReturn.Add(levelNumber);
 

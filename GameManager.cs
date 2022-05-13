@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     //public int nextIncompleteLevel;
     // **************************************************************************************************************************************
-    int highestLevelNumberThatExists = 16;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    int highestLevelNumberThatExists = 21;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
     // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     public int scoreAtStartOfLevel = 0;
     public int currentScore = 0;
-    int topScore = 0;
+    //int topScore = 0;
 
 
     public GameObject menuUI;
@@ -52,6 +52,8 @@ public class GameManager : MonoBehaviour
 
     public Levels repOfLevels;
 
+    public GameObject showHintButton;
+    public GameObject hintText;
 
     public void Awake()
     {
@@ -221,7 +223,15 @@ public class GameManager : MonoBehaviour
             var tempString = currentLevelNumber.ToString() + "_Completed";
             // "3_Completed"
             PlayerPrefs.SetInt(tempString, 1);      // 0 means not completed, 1 means completed
-            //Debug.Log("ok: " + tempString + " ... ");
+                                                    //Debug.Log("ok: " + tempString + " ... ");
+
+            // turn off the hint
+            hintText.SetActive(false);
+            // turn off the "show hint" button
+            showHintButton.SetActive(false);
+
+
+
         }
     }
 
