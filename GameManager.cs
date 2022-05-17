@@ -288,6 +288,8 @@ public class GameManager : MonoBehaviour
                 restartLevelButton.GetComponent<ColorFluxButton>().StopColorFlux();
                 FlashingTextForTutorial.GetComponent<ColorFluxText>().StopColorFlux();
             }
+
+            UpdateLevelCompletionInfo();
             
 
 
@@ -429,6 +431,85 @@ public class GameManager : MonoBehaviour
 
 
     //}
+
+
+
+    public int pointInHistory = 0;
+    ArrayList History = new ArrayList();
+
+
+    public void TakeSnapshot() {
+        // store the current state of all circles, instantiated circles, bigs, goals
+        // stuff it all into an arraylist, History, where History[0] is the first snapshot, History[1] is the second snapshot, etc.
+
+        // History[0][0] is circles
+        //                          History[0][0][0] is the first circle, History[0][0][9] is the 10th circle,  History[0][0][9][0] is the circle's value
+        //                                                                                                      History[0][0][9][1] is the circle's activeOrNot
+        //                                                                                                      History[0][0][9][2] is the circle's position
+        // History[0][1] is instantiated circles
+        // History[0][2] is Bigs
+        // History[0][3] is Goals
+
+        ArrayList thisSnapshot = new ArrayList();
+
+        ArrayList circleInfo = new ArrayList();
+        circleInfo = repOfLevels.GetAllCircleInfo();
+        thisSnapshot.Add(circleInfo);       // this will be History[0][0]
+
+        ArrayList instantiatedCircleInfo = new ArrayList();
+        instantiatedCircleInfo = repOfLevels.GetALLInstantiatedCircleInfo();
+        thisSnapshot.Add(instantiatedCircleInfo);
+
+        ArrayList bigsInfo = new ArrayList();
+        bigsInfo = repOfLevels.GetALLBigsInfo();
+        thisSnapshot.Add(bigsInfo);
+
+        ArrayList goalsInfo = new ArrayList();
+        goalsInfo = repOfLevels.GetALLGoalsInfo();
+        thisSnapshot.Add(goalsInfo);                            // History[4][3][1][3] is the second [1] goal's position [3] at pointInHistory 4
+
+        // after everything is gathered:
+        pointInHistory++;   // use this as an index for retrieving from History
+        History.Add(thisSnapshot);
+    }
+
+    public void GoBackOneStep() {
+        
+        if (pointInHistory >= 1) {
+            GoBackToSnapshot(pointInHistory - 1);
+            pointInHistory -= 1;
+        }
+
+    }
+
+    public void GoBackToSnapshot(int timestamp) {
+        ArrayList ToLoad = new ArrayList();
+        ToLoad = (ArrayList)History[timestamp];
+
+        ArrayList Circles = new ArrayList();
+        ArrayList IntCirs = new ArrayList();
+        ArrayList Bigs = new ArrayList();
+        ArrayList Goals = new ArrayList();
+
+        Circles = (ArrayList)ToLoad[0];
+        IntCirs = (ArrayList)ToLoad[1];
+        Bigs = (ArrayList)ToLoad[2];
+        Goals = (ArrayList)ToLoad[3];
+
+        for (int i = 0; i < 10; i++) {
+            repOfLevels.RestoreCircle((ArrayList)Circles[i], i);
+        }
+        repOfLevels.RestoreALLInstantiatedCircles(IntCirs);
+        for (int i = 0; i < 6; i++) {
+            repOfLevels.RestoreBig((ArrayList)Bigs[i], i);
+        }
+        for (int i = 0; i < 5; i++) {
+            repOfLevels.RestoreGoal((ArrayList)Goals[i], i);
+        }
+
+
+
+    }
 
 
 

@@ -115,6 +115,9 @@ public class DragDropLittle : MonoBehaviour
                         //Destroy(gameObject);
                         gameObject.SetActive(false);
                         gameManager.checkIfLevelIsOver();
+
+                        GameManager.instance.TakeSnapshot();
+
                         break;
                     }
                 }
@@ -147,6 +150,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<MathOperators>().firstNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
                 encounteredObject.GetComponent<MathOperators>().CompleteMath();
+                GameManager.instance.TakeSnapshot();
             }
             else if (encounteredObject.GetComponent<MathOperators>().magnet2occupied == false)
             {
@@ -161,6 +165,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<MathOperators>().secondNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
                 encounteredObject.GetComponent<MathOperators>().CompleteMath();
+                GameManager.instance.TakeSnapshot();
             }
             else
             {
@@ -305,7 +310,7 @@ public class DragDropLittle : MonoBehaviour
             ////Destroy(gameObject);        // destroy original number
             //gameObject.SetActive(false);
             gameObject.SetActive(false);
-
+            GameManager.instance.TakeSnapshot();
 
         }
         else if (encounteredObject != null && encounteredObject.gameObject.CompareTag("goal"))
@@ -315,6 +320,7 @@ public class DragDropLittle : MonoBehaviour
             {
                 encounteredObject.GetComponent<Goal>().MarkGoalAsFulfilled();                
                 gameObject.SetActive(false);
+                GameManager.instance.TakeSnapshot();
             }
             else if (encounteredObject.GetComponent<Goal>().goalFulfilled == true)
             {

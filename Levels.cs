@@ -927,6 +927,7 @@ public class Levels : MonoBehaviour
             }
         }
 
+        GameManager.instance.TakeSnapshot();
 
     }
 
@@ -1145,6 +1146,172 @@ public class Levels : MonoBehaviour
         toReturn.Add(levelNumber);
 
         return toReturn;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ArrayList GetCircleInfo(int circleNumber) {
+        ArrayList info = new ArrayList();
+
+        float value = circlesList[circleNumber].GetComponent<DragDropLittle>().valueOfThisThing;
+        bool activeOrNot = circlesList[circleNumber].gameObject.activeSelf;
+        Vector3 position = circlesList[circleNumber].transform.position;
+
+        info.Add(value);
+        info.Add(activeOrNot);
+        info.Add(position);
+
+        return info;
+    }
+    public ArrayList GetAllCircleInfo() {
+        ArrayList allCircleInfo = new ArrayList();
+
+        for (int i = 0; i < 10; i++) {
+            ArrayList oneSingleCircle = new ArrayList();
+            oneSingleCircle = GetCircleInfo(i);
+            allCircleInfo.Add(oneSingleCircle);
+        }
+        return allCircleInfo;
+    }
+    
+    public ArrayList GetInstantiatedCircleInfo(GameObject thingy) {
+        ArrayList info = new ArrayList();
+
+        float value = thingy.GetComponent<DragDropLittle>().valueOfThisThing;
+        bool activeOrNot = thingy.gameObject.activeSelf;
+        Vector3 position = thingy.transform.position;
+
+        info.Add(value);
+        info.Add(activeOrNot);
+        info.Add(position);
+
+        return info;
+    }
+    public ArrayList GetALLInstantiatedCircleInfo() {
+        ArrayList allInstantCircleInfo = new ArrayList();
+        
+        for (var i = InstantiatedCirclesParent.gameObject.transform.childCount - 1; i >= 0; i--) {
+            ArrayList oneSingleCircle = new ArrayList();
+            oneSingleCircle = GetInstantiatedCircleInfo(InstantiatedCirclesParent.gameObject.transform.GetChild(i).gameObject);
+            allInstantCircleInfo.Add(oneSingleCircle);
+        }
+
+        return allInstantCircleInfo;
+    }
+
+    public ArrayList GetBigsInfo(int bigsNumber) {
+        ArrayList info = new ArrayList();
+
+        string whatMath = bigsList[bigsNumber].GetComponent<MathOperators>().whatMathDoesThisThingDo;
+        bool activeOrNot = bigsList[bigsNumber].gameObject.activeSelf;
+        Vector3 position = bigsList[bigsNumber].transform.position;
+
+        info.Add(whatMath);
+        info.Add(activeOrNot);
+        info.Add(position);
+
+        return info;
+    }
+    public ArrayList GetALLBigsInfo() {
+        ArrayList allBigsInfo = new ArrayList();
+
+        for (int i = 0; i < 6; i++) {
+            ArrayList oneSingleBig = new ArrayList();
+            oneSingleBig = GetBigsInfo(i);
+            allBigsInfo.Add(oneSingleBig);
+        }
+        return allBigsInfo;
+    }
+
+    public ArrayList GetGoalInfo(int goalNumber) {
+        ArrayList info = new ArrayList();
+
+        int goalValue = goalsList[goalNumber].GetComponent<Goal>().goalNumber;
+        bool goalFulfilled = goalsList[goalNumber].GetComponent<Goal>().goalFulfilled;
+        bool activeOrNot = goalsList[goalNumber].gameObject.activeSelf;
+        Vector3 position = goalsList[goalNumber].transform.position;
+
+        info.Add(goalValue);
+        info.Add(goalFulfilled);
+        info.Add(activeOrNot);
+        info.Add(position);
+
+        return info;
+    }
+    public ArrayList GetALLGoalsInfo() {
+        ArrayList allGoalsInfo = new ArrayList();
+
+        for (int i = 0; i < 5; i++)
+        {
+            ArrayList oneSingleGoal = new ArrayList();
+            oneSingleGoal = GetGoalInfo(i);
+            allGoalsInfo.Add(oneSingleGoal);
+        }
+        return allGoalsInfo;
+    }
+
+
+
+    public void RestoreCircle(ArrayList info, int index) {
+        float value = (float)info[0];
+        bool activeOrNot = (bool)info[1];
+        Vector3 position = (Vector3)info[2];
+        circlesList[index].GetComponent<DragDropLittle>().valueOfThisThing = value;
+        // have to update the TextMeshPro text, too?
+        circlesList[index].gameObject.SetActive(activeOrNot);
+        circlesList[index].transform.position = position;
+    }
+    public void RestoreALLInstantiatedCircles(ArrayList allIntCircles) {
+        
+
+        for (int i = 0; i < allIntCircles.Count; i++) {
+            ArrayList info = (ArrayList)allIntCircles[i];
+
+            float value = (float)info[0];
+            bool activeOrNot = (bool)info[1];
+            Vector3 position = (Vector3)info[2];
+
+            GameObject oneInstCircle = InstantiatedCirclesParent.gameObject.transform.GetChild(i).gameObject;
+            oneInstCircle.GetComponent<DragDropLittle>().valueOfThisThing = value;
+            oneInstCircle.gameObject.SetActive(activeOrNot);
+            oneInstCircle.transform.position = position;
+
+        }
+
+
+    }
+    public void RestoreBig(ArrayList info, int index) {
+        string whatMath = (string)info[0];
+        bool activeOrNot = (bool)info[1];
+        Vector3 position = (Vector3)info[2];
+        bigsList[index].GetComponent<MathOperators>().whatMathDoesThisThingDo = whatMath;
+        bigsList[index].gameObject.SetActive(activeOrNot);
+        bigsList[index].transform.position = position;
+    }
+    public void RestoreGoal(ArrayList info, int index) {
+        int goalValue = (int)info[0];
+        bool goalFulfilled = (bool)info[1];
+        bool activeOrNot = (bool)info[2];
+        Vector3 position = (Vector3)info[3];
+        goalsList[index].GetComponent<Goal>().goalNumber = goalValue;
+        goalsList[index].GetComponent<Goal>().goalFulfilled = goalFulfilled;
+        goalsList[index].gameObject.SetActive(activeOrNot);
+        goalsList[index].transform.position = position;
     }
 
 
