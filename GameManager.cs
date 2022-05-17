@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     public GameObject bigsParent;
     public GameObject inGameUI;
     public GameObject levelSelectUI;
+    public GameObject levelSelectContentPanel;
 
     public GameObject InstantiatedCirclesParent;
 
@@ -56,12 +57,16 @@ public class GameManager : MonoBehaviour
     public GameObject showHintButton;
     public GameObject hintText;
 
-    public bool tutorialsActivated = true;
+    //public bool tutorialsActivated = true;
     public GameObject Level1Tutorial;
     public GameObject Level2Tutorial;
     public TextMeshProUGUI FlashingTextForTutorial;
+    public Button tutorialOnButton;
+    public Button tutorialOffButton;
 
     public GameObject settingsUI;
+
+
 
 
     public void Awake()
@@ -104,6 +109,21 @@ public class GameManager : MonoBehaviour
         Level1Tutorial.SetActive(false);
         Level2Tutorial.SetActive(false);
         settingsUI.SetActive(false);
+
+
+        if (PlayerPrefs.HasKey("TutorialsActivated")) {
+            if (PlayerPrefs.GetInt("TutorialsActivated") == 0) {
+                tutorialOnButton.GetComponent<Button>().interactable = true;
+                tutorialOffButton.GetComponent<Button>().interactable = false;
+            } else if (PlayerPrefs.GetInt("TutorialsActivated") == 1) {
+                tutorialOnButton.GetComponent<Button>().interactable = false;
+                tutorialOffButton.GetComponent<Button>().interactable = true;
+            }
+        }
+
+
+
+
     }
 
 
@@ -142,6 +162,21 @@ public class GameManager : MonoBehaviour
         Level1Tutorial.SetActive(false);
         Level2Tutorial.SetActive(false);
         settingsUI.SetActive(false);
+
+
+        if (PlayerPrefs.HasKey("TutorialsActivated"))
+        {
+            if (PlayerPrefs.GetInt("TutorialsActivated") == 0)
+            {
+                tutorialOnButton.GetComponent<Button>().interactable = true;
+                tutorialOffButton.GetComponent<Button>().interactable = false;
+            }
+            else if (PlayerPrefs.GetInt("TutorialsActivated") == 1)
+            {
+                tutorialOnButton.GetComponent<Button>().interactable = false;
+                tutorialOffButton.GetComponent<Button>().interactable = true;
+            }
+        }
 
     }
 
@@ -249,7 +284,7 @@ public class GameManager : MonoBehaviour
             Level1Tutorial.SetActive(false);
             Level2Tutorial.SetActive(false);
             
-            if (currentLevelNumber == 1 && tutorialsActivated == true) {
+            if (currentLevelNumber == 1 && PlayerPrefs.GetInt("TutorialsActivated") == 1) {
                 restartLevelButton.GetComponent<ColorFluxButton>().StopColorFlux();
                 FlashingTextForTutorial.GetComponent<ColorFluxText>().StopColorFlux();
             }
@@ -336,11 +371,45 @@ public class GameManager : MonoBehaviour
     }
 
     public void TutorialsActivate() {
-        tutorialsActivated = true;
+        //tutorialsActivated = true;
+        PlayerPrefs.SetInt("TutorialsActivated", 1);
+        // set the "interactable" status of the TUTORIALS ON button (in the settings menu) to NOT INTERACTABLE, even after a Scene reload
+        //PlayerPrefs.SetInt("TutorialsOnButton", 0);
+        //PlayerPrefs.SetInt("TutorialsOffButton", 1);
     }
-    public void TutorialsDeactive() {
-        tutorialsActivated = false;
+    public void TutorialsDeactivate() {
+        //tutorialsActivated = false;
+        PlayerPrefs.SetInt("TutorialsActivated", 0);
+        //PlayerPrefs.SetInt("TutorialsOnButton", 1);
+        //PlayerPrefs.SetInt("TutorialsOffButton", 0);
+
     }
+
+    public void UpdateLevelCompletionInfo() {
+        CountNumberOfLevelsCompleted();
+        if (allLevelsAreCompleted)
+        {
+            numberOfLevelsCompletedText.text = "All " + (highestLevelNumberThatExists + 1) + " Levels are Solved";
+        }
+        else
+        {
+            numberOfLevelsCompletedText.text = numberOfLevelsCompleted + " of " + (highestLevelNumberThatExists + 1) + " levels completed";
+        }
+
+        // identify the lowest level not yet completed
+        IdentifyLowestUnsolvedLevel();
+        if (allLevelsAreCompleted)
+        {
+            playLevelX.text = "Your training is now complete";
+        }
+        else
+        {
+            playLevelX.text = "Play Level " + (recommendedNextLevel + 1);
+        }
+
+        levelSelectContentPanel.GetComponent<LevelSelector2>().ReloadIconColors();
+    }
+
 
     //public IEnumerator DelayLoad()
     //{

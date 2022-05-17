@@ -868,7 +868,7 @@ public class Levels : MonoBehaviour
         //Debug.Log("started CreateLevel fuction");
         var levelInfo = new ArrayList();
         // grab the level info from LevelDefinitions, then parse it and start the level
-        levelInfo = LevelDefinitions(levelNumber, false);
+        levelInfo = LevelDefinitions(levelNumber, ifRandomThenTrue);
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
@@ -916,7 +916,7 @@ public class Levels : MonoBehaviour
         }
         showHintButton.SetActive(true);
 
-        if (GameManager.instance.tutorialsActivated == true) {
+        if (PlayerPrefs.GetInt("TutorialsActivated") == 1) {
             if (levelNumber == 0) {
                 Level1Tutorial.SetActive(true);
             } else if (levelNumber == 1) {

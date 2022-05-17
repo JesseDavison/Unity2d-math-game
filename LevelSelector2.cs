@@ -18,6 +18,8 @@ public class LevelSelector2 : MonoBehaviour
     //private int amountPerPage;
     private int currentLevelCount;
 
+    private bool gridAlreadySetup = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +38,8 @@ public class LevelSelector2 : MonoBehaviour
         //Debug.Log("total pages: " + totalPages);
     }
 
-    void LoadPanel()
+
+    public void LoadPanel()
     {
         //Debug.Log("number of panels: " + numberOfPanels); 
 
@@ -53,10 +56,16 @@ public class LevelSelector2 : MonoBehaviour
         SetupGrid(levelHolder);
         // if the value of i equals the same value as numberOfPanels (which would mean it's on our last page) then use (numberOfLevels - currentLevelCount), 
         //      otherwise, use amountPerPage
-
         LoadIcons(numberOfLevels, levelHolder);
-        
 
+    }
+
+    public void ReloadPanel() {
+        
+        if (gridAlreadySetup == false) {
+            SetupGrid(levelHolder);
+        }
+        LoadIcons(numberOfLevels, levelHolder);
     }
 
     void SetupGrid(GameObject panel)
@@ -66,6 +75,7 @@ public class LevelSelector2 : MonoBehaviour
         grid.childAlignment = TextAnchor.MiddleCenter;      // makes our icons centered inside our panel
         //grid.childAlignment = TextAnchor.UpperCenter;
         grid.spacing = iconSpacing;
+        gridAlreadySetup = true;
     }
 
     public void ReloadIconColors() {
@@ -74,21 +84,25 @@ public class LevelSelector2 : MonoBehaviour
         int numChildren = levelHolder.transform.childCount;
         for (int i = 0; i < numChildren; i++) {
             Transform child = gameObject.transform.GetChild(i);
-            var tempString = (i - 1).ToString() + "_Completed";
+            var tempString = (i).ToString() + "_Completed";
             // "3_Completed"
             var completedInt = PlayerPrefs.GetInt(tempString, 0);
 
-            ColorBlock colors = child.gameObject.GetComponent<Button>().colors;
+            //ColorBlock colors = child.gameObject.GetComponent<Button>().colors;
             if (completedInt == 1)
             {
-                Debug.Log("this level is completed: " + tempString);
+                //Debug.Log("this level is completed: " + tempString);
+
+                child.GetComponent<LevelSelectScreenButton>().ChangeLevelSelectButtonColorToCompleted();
+
+
                 //icon.gameObject.GetComponent<Button>().interactable = false;
                 // if it IS COMPLETED, then change color to 0.35, 1, 1
-                colors.normalColor = new Color(0.35f, 1, 1, 1);
+                //colors.normalColor = new Color(0.35f, 1, 1, 1);
             }
-            else
-            {
-                colors.normalColor = new Color(0, 0, 0, 1);
+            else if (completedInt == 0) {
+                //colors.normalColor = new Color(0, 0, 0, 1);
+                child.GetComponent<LevelSelectScreenButton>().ChangeLevelSelectButtonColorToNOTCompleted();
             }
         }
     }
