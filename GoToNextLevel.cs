@@ -24,7 +24,8 @@ public class GoToNextLevel : MonoBehaviour
     {
         GameManager.instance.CountNumberOfLevelsCompleted();
         if (GameManager.instance.allLevelsAreCompleted == true) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            GameManager.instance.GoToMainMenu();
         } else {
             GameManager.instance.IdentifyLowestUnsolvedLevel();
             int lowestUnsolvedLevel = GameManager.instance.recommendedNextLevel;

@@ -18,6 +18,12 @@ public class CameraAdjust : MonoBehaviour
     void Start()
     {
         _camera = GetComponent<Camera>();
+        if (PlayerPrefs.HasKey("Rcolor")) {
+            _camera.backgroundColor = new Color(PlayerPrefs.GetFloat("Rcolor"), PlayerPrefs.GetFloat("Gcolor"), PlayerPrefs.GetFloat("Bcolor"), 1);
+        } else {
+            _camera.backgroundColor = new Color(0.376f, 0.51f, 0.714f, 1);        // set background to Glaucous by default
+        }
+
     }
 
     // Adjust the camera's height so the desired scene width fits in view
@@ -29,5 +35,10 @@ public class CameraAdjust : MonoBehaviour
         float desiredHalfHeight = 0.5f * unitsPerPixel * Screen.height;
 
         _camera.orthographicSize = desiredHalfHeight;
+
+    }
+
+    public void ChangeBackground(Color newColor) {
+        _camera.backgroundColor = newColor;
     }
 }

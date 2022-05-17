@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ColorFlux : MonoBehaviour
+
+public class ColorFluxButton : MonoBehaviour
 {                                               // https://www.youtube.com/watch?v=C_f2ChrcSSM, Color Lerp in Unity, Best practice
-    SpriteRenderer rendy;
-    
+    //SpriteRenderer rendy;
+
+    Button thisButton;
+
 
     public Color startColor;
     public Color fluxColor;
@@ -26,11 +30,13 @@ public class ColorFlux : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        lerpTime = 9;
-        rendy = gameObject.GetComponent<SpriteRenderer>();
+        thisButton = GetComponent<Button>();
+        lerpTime = 5;
+        //rendy = gameObject.GetComponent<SpriteRenderer>();
         //startColor = rendy.material.color;
         //readyToChange = false;
-        startColor = new Color(0.6274f, 0.6274f, 0.6274f, 1);
+        //startColor = new Color(0.6274f, 0.6274f, 0.6274f, 1);
+        startColor = new Color(1, 1, 1, 1);
         //startColor = rendy.color;         // if one of the Bigs is disabled in the Unity interface this won't work, so we call Awake() at beginning of PossiblyStartColorFlux()
         fluxColor = new Color(0.9f, 0.2f, 0.2f, 1);
         myColors[0] = startColor;
@@ -39,10 +45,12 @@ public class ColorFlux : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update(){
+    void Update()
+    {
         if (readyToChange == true)
         {
-            rendy.color = Color.Lerp(rendy.color, myColors[colorIndex], lerpTime * Time.deltaTime);
+            //rendy.color = Color.Lerp(rendy.color, myColors[colorIndex], lerpTime * Time.deltaTime);
+            thisButton.GetComponent<Image>().color = Color.Lerp(thisButton.GetComponent<Image>().color, myColors[colorIndex], lerpTime * Time.deltaTime);
 
             t = Mathf.Lerp(t, 1f, lerpTime * Time.deltaTime);
             if (t > 0.9f)
@@ -54,17 +62,29 @@ public class ColorFlux : MonoBehaviour
         }
     }
 
+    public void StartColorFlux() {
+        readyToChange = true;
+    }
+    public void StopColorFlux() {
+        readyToChange = false;
+        thisButton.GetComponent<Image>().color = startColor;
+    }
 
 
-    public void PossiblyStartColorFlux() {
+
+    public void PossiblyStartColorFlux()
+    {
         //Debug.Log("entered PossiblyStartColorFlux function");
         //rendy = gameObject.GetComponent<SpriteRenderer>();
         //Awake();
 
-        if (gameObject.GetComponent<MathOperators>().magnet1occupied == true && gameObject.GetComponent<MathOperators>().magnet2occupied == true) {
+        if (gameObject.GetComponent<MathOperators>().magnet1occupied == true && gameObject.GetComponent<MathOperators>().magnet2occupied == true)
+        {
             readyToChange = true;
 
-        } else {
+        }
+        else
+        {
             readyToChange = false;
             //rendy.material.color = startColor;
             //rendy.color = startColor;

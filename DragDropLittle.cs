@@ -139,13 +139,14 @@ public class DragDropLittle : MonoBehaviour
                 tempVector3.z = defaultZposition;
                 transform.position = tempVector3;
                 encounteredObject.GetComponent<MathOperators>().magnet1occupied = true;
-                encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
+                //encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
                 usingWhichMagnet = 1;
                 objectMagnetizedTo = encounteredObject;
                 // now, set the circle's number value into the Big object
                 encounteredObject.GetComponent<MathOperators>().firstNumber = gameObject;
                 encounteredObject.GetComponent<MathOperators>().firstNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
+                encounteredObject.GetComponent<MathOperators>().CompleteMath();
             }
             else if (encounteredObject.GetComponent<MathOperators>().magnet2occupied == false)
             {
@@ -153,12 +154,13 @@ public class DragDropLittle : MonoBehaviour
                 tempVector3.z = defaultZposition;
                 transform.position = tempVector3;
                 encounteredObject.GetComponent<MathOperators>().magnet2occupied = true;
-                encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
+                //encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
                 usingWhichMagnet = 2;
                 objectMagnetizedTo = encounteredObject;
                 encounteredObject.GetComponent<MathOperators>().secondNumber = gameObject;
                 encounteredObject.GetComponent<MathOperators>().secondNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
+                encounteredObject.GetComponent<MathOperators>().CompleteMath();
             }
             else
             {
@@ -405,7 +407,7 @@ public class DragDropLittle : MonoBehaviour
             // change the color of the goal slightly...     as of May 4 2022 it starts at 0.6961, 0.7140, 0.9905, 1
             // first, save the current color
             goalColor = encounteredObject.GetComponent<SpriteRenderer>().color;
-            encounteredObject.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.1f, 0.9905f, 1f);
+            encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.35f, 0, 0, 1);
 
         }
         else if (collision.gameObject.CompareTag("goal") && collision.GetComponent<Goal>().goalFulfilled == true)

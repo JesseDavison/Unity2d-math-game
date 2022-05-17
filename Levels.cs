@@ -43,6 +43,11 @@ public class Levels : MonoBehaviour
 
     public GameObject InstantiatedCirclesParent;
 
+    public GameObject Level1Tutorial;
+    public GameObject Level2Tutorial;
+    public GameObject RestartLevelButton;
+    public TextMeshProUGUI FlashingTextForTutorial;
+
     public List<string> difficultyLevels;
 
     public int highestLevelNumber = 3;
@@ -863,7 +868,7 @@ public class Levels : MonoBehaviour
         //Debug.Log("started CreateLevel fuction");
         var levelInfo = new ArrayList();
         // grab the level info from LevelDefinitions, then parse it and start the level
-        levelInfo = LevelDefinitions(levelNumber, ifRandomThenTrue);
+        levelInfo = LevelDefinitions(levelNumber, false);
         List<int> circles = new List<int>();
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
@@ -910,6 +915,24 @@ public class Levels : MonoBehaviour
             assignTextToHints(hintsList[i], hints[i]);
         }
         showHintButton.SetActive(true);
+
+        if (GameManager.instance.tutorialsActivated == true) {
+            if (levelNumber == 0) {
+                Level1Tutorial.SetActive(true);
+            } else if (levelNumber == 1) {
+                Level2Tutorial.SetActive(true);
+                // turn on flashing red Restart Level button
+                RestartLevelButton.GetComponent<ColorFluxButton>().StartColorFlux();
+                FlashingTextForTutorial.GetComponent<ColorFluxText>().StartColorFlux();
+            }
+        }
+
+
+    }
+
+    public void DeactivateTutorialAfterLevelEnd() {
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
     }
 
     public void DeleteInstantiatedCircles() {
@@ -989,60 +1012,60 @@ public class Levels : MonoBehaviour
                 AddToGoalsList(1);
                 AddHints("HINT: start with 6"); break;
             case 2:
-                AddToCirclesList(6, 5, 4);
-                AddToBigsList("exponent2", "exponent2", "exponent2");
-                AddToGoalsList(36, 25, 16);
-                AddHints("HINT: drink more water"); break;
-            case 3:
-                AddToCirclesList(4, 6, 5);
-                AddToBigsList("exponent4", "squareRoot", "subtraction", "division");
-                AddToGoalsList(2);
-                AddHints("HINT: get a 10"); break;
-            case 4:
-                AddToCirclesList(10, 10, 8, 2, 8);
-                AddToBigsList("addition", "division", "addition", "squareRoot");
-                AddToGoalsList(4, 10);
-                AddHints("HINT: the tens are redundant"); break;
-            case 5:
-                AddToCirclesList(64, 14, 2, 2);
-                AddToBigsList("cubeRoot", "division", "division");
-                AddToGoalsList(2, 7);
-                AddHints("HINT: denominator twos"); break;
-            case 6:
-                AddToCirclesList(9, 13);
-                AddToBigsList("squareRoot", "split3", "addition", "division", "addition");
-                AddToGoalsList(7);
-                AddHints("HINT: everyone has a plus"); break;
-            case 7:
-                AddToCirclesList(1, 3, 6, 21);
-                AddToBigsList("split3", "multiplication", "multiplication", "multiplication", "addition", "multiplication");
-                AddToGoalsList(21);
-                AddHints("HINT: Find one-third of 21"); break;
-            case 8:
-                AddToCirclesList(5, 10, 2, 1);
-                AddToBigsList("subtraction", "division", "multiplication");
-                AddToGoalsList(24);
-                AddHints("HINT: multiply first"); break;
-            case 9:
-                AddToCirclesList(9, 4, 3, 3, 4);
-                AddToBigsList("multiplication", "addition", "division", "addition");
-                AddToGoalsList(17);
-                AddHints("HINT: 39"); break;
-            case 10:
-                AddToCirclesList(9, 3, 4);
-                AddToBigsList("multiplication", "subtraction");
-                AddToGoalsList(23);
-                AddHints("HINT: 27 - 4 = 23"); break;
-            case 11:
-                AddToCirclesList(19, 15, 3, 5);
-                AddToBigsList("multiplication", "division", "division");
-                AddToGoalsList(19);
-                AddHints("HINT: it's just 19"); break;
-            case 12:
                 AddToCirclesList(5, 3);
                 AddToBigsList("addition", "cubeRoot");
                 AddToGoalsList(2);
                 AddHints("HINT: plus first"); break;
+            case 3:
+                AddToCirclesList(9, 3, 4);
+                AddToBigsList("multiplication", "subtraction");
+                AddToGoalsList(23);
+                AddHints("HINT: 27 - 4 = 23"); break;
+            case 4:
+                AddToCirclesList(6, 5, 4);
+                AddToBigsList("exponent2", "exponent2", "exponent2");
+                AddToGoalsList(36, 25, 16);
+                AddHints("HINT: drink more water"); break;
+            case 5:
+                AddToCirclesList(4, 6, 5);
+                AddToBigsList("exponent4", "squareRoot", "subtraction", "division");
+                AddToGoalsList(2);
+                AddHints("HINT: get a 10"); break;
+            case 6:
+                AddToCirclesList(10, 10, 8, 2, 8);
+                AddToBigsList("addition", "division", "addition", "squareRoot");
+                AddToGoalsList(4, 10);
+                AddHints("HINT: the tens are redundant"); break;
+            case 7:
+                AddToCirclesList(64, 14, 2, 2);
+                AddToBigsList("cubeRoot", "division", "division");
+                AddToGoalsList(2, 7);
+                AddHints("HINT: denominator twos"); break;
+            case 8:
+                AddToCirclesList(9, 13);
+                AddToBigsList("squareRoot", "split3", "addition", "division", "addition");
+                AddToGoalsList(7);
+                AddHints("HINT: everyone has a plus"); break;
+            case 9:
+                AddToCirclesList(1, 3, 6, 21);
+                AddToBigsList("split3", "multiplication", "multiplication", "multiplication", "addition", "multiplication");
+                AddToGoalsList(21);
+                AddHints("HINT: Find one-third of 21"); break;
+            case 10:
+                AddToCirclesList(5, 10, 2, 1);
+                AddToBigsList("subtraction", "division", "multiplication");
+                AddToGoalsList(24);
+                AddHints("HINT: multiply first"); break;
+            case 11:
+                AddToCirclesList(9, 4, 3, 3, 4);
+                AddToBigsList("multiplication", "addition", "division", "addition");
+                AddToGoalsList(17);
+                AddHints("HINT: 39"); break;
+            case 12:
+                AddToCirclesList(19, 15, 3, 5);
+                AddToBigsList("multiplication", "division", "division");
+                AddToGoalsList(19);
+                AddHints("HINT: it's just 19"); break;
             case 13:
                 AddToCirclesList(17, 1);
                 AddToBigsList("subtraction", "split4", "division", "addition");

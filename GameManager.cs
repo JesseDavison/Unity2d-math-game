@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     public GameObject inGameUI;
     public GameObject levelSelectUI;
 
+    public GameObject InstantiatedCirclesParent;
 
     public int numberOfGoals;
     public bool levelIsDone = false;
@@ -54,6 +55,14 @@ public class GameManager : MonoBehaviour
 
     public GameObject showHintButton;
     public GameObject hintText;
+
+    public bool tutorialsActivated = true;
+    public GameObject Level1Tutorial;
+    public GameObject Level2Tutorial;
+    public TextMeshProUGUI FlashingTextForTutorial;
+
+    public GameObject settingsUI;
+
 
     public void Awake()
     {
@@ -87,10 +96,14 @@ public class GameManager : MonoBehaviour
         nextLevelButton.SetActive(false);
         restartLevelButton.SetActive(true);
         circlesParent.SetActive(false);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         goalsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(false);
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
+        settingsUI.SetActive(false);
     }
 
 
@@ -121,10 +134,14 @@ public class GameManager : MonoBehaviour
         nextLevelButton.SetActive(false);
         restartLevelButton.SetActive(true);
         circlesParent.SetActive(false);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         goalsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(false);
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
+        settingsUI.SetActive(false);
 
     }
 
@@ -181,7 +198,6 @@ public class GameManager : MonoBehaviour
             }
         }
         if (fulfilledGoalsFound >= numberOfGoals) {
-            // level is over
             goalsAreDone = true;
             //Debug.Log("we found that " + numberOfGoals + " goals have been fulfilled");
             //nextLevelButton.gameObject.SetActive(true);
@@ -229,6 +245,16 @@ public class GameManager : MonoBehaviour
             hintText.SetActive(false);
             // turn off the "show hint" button
             showHintButton.SetActive(false);
+            // turn off the Level1 or Level2 tutorial
+            Level1Tutorial.SetActive(false);
+            Level2Tutorial.SetActive(false);
+            
+            if (currentLevelNumber == 1 && tutorialsActivated == true) {
+                restartLevelButton.GetComponent<ColorFluxButton>().StopColorFlux();
+                FlashingTextForTutorial.GetComponent<ColorFluxText>().StopColorFlux();
+            }
+            
+
 
 
 
@@ -243,13 +269,15 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(true);
         circlesParent.SetActive(true);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(true);
         inGameUI.SetActive(true);
         levelSelectUI.SetActive(false);
 
         //highestLevelCompletedText.text = PlayerPrefs.GetInt("highestLevelCompleted", 0).ToString() + " of 100 levels completed";
         //playLevelX.text = "Play Level " + (PlayerPrefs.GetInt("highestLevelCompleted", 0) + 1).ToString();
-
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
         repOfLevels.GoToLevel(level);
     }
 
@@ -261,15 +289,58 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(false);
         circlesParent.SetActive(false);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(true);
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
+        settingsUI.SetActive(false);
 
         // need to reload all the icons, because things may have changed
         //LevelSelectLoader.GetComponent<LevelSelector2>().ReloadIcons();                              //**********************************************
     }
 
+    public void GoToSettingsStuff() {
 
+        menuUI.SetActive(false);
+        nextLevelButton.SetActive(false);
+        restartLevelButton.SetActive(false);
+        //ensure that the level components are active
+        goalsParent.SetActive(false);
+        circlesParent.SetActive(false);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        bigsParent.SetActive(false);
+        inGameUI.SetActive(false);
+        levelSelectUI.SetActive(false);
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
+        settingsUI.SetActive(true);
+
+    }
+
+    public void GoToMainMenu() {
+        menuUI.SetActive(true);
+        nextLevelButton.SetActive(false);
+        restartLevelButton.SetActive(false);
+        //ensure that the level components are active
+        goalsParent.SetActive(false);
+        circlesParent.SetActive(false);
+        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        bigsParent.SetActive(false);
+        inGameUI.SetActive(false);
+        levelSelectUI.SetActive(false);
+        Level1Tutorial.SetActive(false);
+        Level2Tutorial.SetActive(false);
+        settingsUI.SetActive(false);
+    }
+
+    public void TutorialsActivate() {
+        tutorialsActivated = true;
+    }
+    public void TutorialsDeactive() {
+        tutorialsActivated = false;
+    }
 
     //public IEnumerator DelayLoad()
     //{
@@ -286,7 +357,7 @@ public class GameManager : MonoBehaviour
     //    if (currentScore > topScore) {
     //        PlayerPrefs.SetInt("topScore", currentScore);
     //    }
-        
+
 
     //}
 
