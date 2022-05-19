@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     //public int nextIncompleteLevel;
     // **************************************************************************************************************************************
-    int highestLevelNumberThatExists = 21;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    int highestLevelNumberThatExists = 23;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
     // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
@@ -40,17 +40,19 @@ public class GameManager : MonoBehaviour
     public GameObject menuUI;
     public GameObject goalsParent;
     public GameObject circlesParent;
+    public GameObject extraCirclesParent;
     public GameObject bigsParent;
     public GameObject inGameUI;
     public GameObject levelSelectUI;
     public GameObject levelSelectContentPanel;
 
-    public GameObject InstantiatedCirclesParent;
+    //public GameObject InstantiatedCirclesParent;
 
     public int numberOfGoals;
     public bool levelIsDone = false;
     public GameObject nextLevelButton;          // do this later
     public GameObject restartLevelButton;
+    public GameObject backButton;
 
     public Levels repOfLevels;
 
@@ -101,7 +103,8 @@ public class GameManager : MonoBehaviour
         nextLevelButton.SetActive(false);
         restartLevelButton.SetActive(true);
         circlesParent.SetActive(false);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(false);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         goalsParent.SetActive(false);
         inGameUI.SetActive(false);
@@ -154,7 +157,8 @@ public class GameManager : MonoBehaviour
         nextLevelButton.SetActive(false);
         restartLevelButton.SetActive(true);
         circlesParent.SetActive(false);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(false);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         goalsParent.SetActive(false);
         inGameUI.SetActive(false);
@@ -270,6 +274,7 @@ public class GameManager : MonoBehaviour
             // make the Next Level button appear
             nextLevelButton.SetActive(true);
             restartLevelButton.SetActive(false);
+            backButton.SetActive(false);
             
             var tempString = currentLevelNumber.ToString() + "_Completed";
             // "3_Completed"
@@ -306,7 +311,8 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(true);
         circlesParent.SetActive(true);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(true);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(true);
         inGameUI.SetActive(true);
         levelSelectUI.SetActive(false);
@@ -326,7 +332,8 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(false);
         circlesParent.SetActive(false);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(false);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(true);
@@ -346,7 +353,8 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(false);
         circlesParent.SetActive(false);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(false);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(false);
@@ -363,7 +371,8 @@ public class GameManager : MonoBehaviour
         //ensure that the level components are active
         goalsParent.SetActive(false);
         circlesParent.SetActive(false);
-        repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
+        extraCirclesParent.SetActive(false);
+        //repOfLevels.GetComponent<Levels>().DeleteInstantiatedCircles();
         bigsParent.SetActive(false);
         inGameUI.SetActive(false);
         levelSelectUI.SetActive(false);
@@ -372,7 +381,7 @@ public class GameManager : MonoBehaviour
         settingsUI.SetActive(false);
     }
 
-    public void TutorialsActivate() {
+    public void TutorialsActivate() {           
         //tutorialsActivated = true;
         PlayerPrefs.SetInt("TutorialsActivated", 1);
         // set the "interactable" status of the TUTORIALS ON button (in the settings menu) to NOT INTERACTABLE, even after a Scene reload
@@ -434,8 +443,57 @@ public class GameManager : MonoBehaviour
 
 
 
-    public int pointInHistory = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public int pointInHistory = -1;
     ArrayList History = new ArrayList();
+    public int historyLength = 0;
 
 
     public void TakeSnapshot() {
@@ -456,9 +514,9 @@ public class GameManager : MonoBehaviour
         circleInfo = repOfLevels.GetAllCircleInfo();
         thisSnapshot.Add(circleInfo);       // this will be History[0][0]
 
-        ArrayList instantiatedCircleInfo = new ArrayList();
-        instantiatedCircleInfo = repOfLevels.GetALLInstantiatedCircleInfo();
-        thisSnapshot.Add(instantiatedCircleInfo);
+        ArrayList extraCircleInfo = new ArrayList();
+        extraCircleInfo = repOfLevels.GetAllExtraCircleInfo();
+        thisSnapshot.Add(extraCircleInfo);
 
         ArrayList bigsInfo = new ArrayList();
         bigsInfo = repOfLevels.GetALLBigsInfo();
@@ -471,6 +529,7 @@ public class GameManager : MonoBehaviour
         // after everything is gathered:
         pointInHistory++;   // use this as an index for retrieving from History
         History.Add(thisSnapshot);
+        historyLength = History.Count;
     }
 
     public void GoBackOneStep() {
@@ -479,37 +538,55 @@ public class GameManager : MonoBehaviour
             GoBackToSnapshot(pointInHistory - 1);
             pointInHistory -= 1;
         }
+        repOfLevels.EmptyGarbage();
+
+        // if we're back at the beginning of the level, make the BACK button disappear (because we don't need it)
+        if (historyLength <= 1) {
+            // turn off the BACK button
+            backButton.SetActive(false);
+        }
 
     }
+
 
     public void GoBackToSnapshot(int timestamp) {
         ArrayList ToLoad = new ArrayList();
         ToLoad = (ArrayList)History[timestamp];
+        History.RemoveAt(History.Count - 1);        // this is not robust because what if we choose a much earlier timestamp... but it doesn't matter for now
+        historyLength = History.Count;
 
         ArrayList Circles = new ArrayList();
-        ArrayList IntCirs = new ArrayList();
+        ArrayList ExtraCircles = new ArrayList();
         ArrayList Bigs = new ArrayList();
         ArrayList Goals = new ArrayList();
 
         Circles = (ArrayList)ToLoad[0];
-        IntCirs = (ArrayList)ToLoad[1];
+        ExtraCircles = (ArrayList)ToLoad[1];
         Bigs = (ArrayList)ToLoad[2];
         Goals = (ArrayList)ToLoad[3];
 
         for (int i = 0; i < 10; i++) {
             repOfLevels.RestoreCircle((ArrayList)Circles[i], i);
         }
-        repOfLevels.RestoreALLInstantiatedCircles(IntCirs);
+        for (int i = 0; i < 30; i++) {
+            repOfLevels.RestoreExtraCircle((ArrayList)ExtraCircles[i], i);
+        }
         for (int i = 0; i < 6; i++) {
             repOfLevels.RestoreBig((ArrayList)Bigs[i], i);
         }
         for (int i = 0; i < 5; i++) {
             repOfLevels.RestoreGoal((ArrayList)Goals[i], i);
         }
-
-
-
     }
+
+
+    public void ResetHistory()
+    {
+        pointInHistory = -1;
+        History = null;
+        History = new ArrayList();
+    }
+
 
 
 

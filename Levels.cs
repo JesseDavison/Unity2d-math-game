@@ -21,6 +21,40 @@ public class Levels : MonoBehaviour
     public GameObject circle10;
     public List<GameObject> circlesList;  // circles are added in Start()
 
+    public GameObject extraCircle1;
+    public GameObject extraCircle2;
+    public GameObject extraCircle3;
+    public GameObject extraCircle4;
+    public GameObject extraCircle5;
+    public GameObject extraCircle6;
+    public GameObject extraCircle7;
+    public GameObject extraCircle8;
+    public GameObject extraCircle9;
+    public GameObject extraCircle10;
+    public GameObject extraCircle11;
+    public GameObject extraCircle12;
+    public GameObject extraCircle13;
+    public GameObject extraCircle14;
+    public GameObject extraCircle15;
+    public GameObject extraCircle16;
+    public GameObject extraCircle17;
+    public GameObject extraCircle18;
+    public GameObject extraCircle19;
+    public GameObject extraCircle20;
+    public GameObject extraCircle21;
+    public GameObject extraCircle22;
+    public GameObject extraCircle23;
+    public GameObject extraCircle24;
+    public GameObject extraCircle25;
+    public GameObject extraCircle26;
+    public GameObject extraCircle27;
+    public GameObject extraCircle28;
+    public GameObject extraCircle29;
+    public GameObject extraCircle30;
+    public List<GameObject> extraCirclesList;
+
+
+
     public GameObject big1;
     public GameObject big2;
     public GameObject big3;
@@ -41,7 +75,7 @@ public class Levels : MonoBehaviour
     public GameObject hint1;
     public List<GameObject> hintsList;
 
-    public GameObject InstantiatedCirclesParent;
+    //public GameObject InstantiatedCirclesParent;
 
     public GameObject Level1Tutorial;
     public GameObject Level2Tutorial;
@@ -61,7 +95,7 @@ public class Levels : MonoBehaviour
     static int bigZvalue = 19;
     static int goalZvalue = 20;
 
-    static float circle_TopRowY = 4.5f;
+    static float circle_TopRowY = 4.3f;
     static float circle_BotRowY = 3.1f;
 
     static float _5CirclesSpacingX = 1.2f;
@@ -102,6 +136,36 @@ public class Levels : MonoBehaviour
         circlesList.Add(circle8);
         circlesList.Add(circle9);
         circlesList.Add(circle10);
+        extraCirclesList.Add(extraCircle1);
+        extraCirclesList.Add(extraCircle2);
+        extraCirclesList.Add(extraCircle3);
+        extraCirclesList.Add(extraCircle4);
+        extraCirclesList.Add(extraCircle5);
+        extraCirclesList.Add(extraCircle6);
+        extraCirclesList.Add(extraCircle7);
+        extraCirclesList.Add(extraCircle8);
+        extraCirclesList.Add(extraCircle9);
+        extraCirclesList.Add(extraCircle10);
+        extraCirclesList.Add(extraCircle11);
+        extraCirclesList.Add(extraCircle12);
+        extraCirclesList.Add(extraCircle13);
+        extraCirclesList.Add(extraCircle14);
+        extraCirclesList.Add(extraCircle15);
+        extraCirclesList.Add(extraCircle16);
+        extraCirclesList.Add(extraCircle17);
+        extraCirclesList.Add(extraCircle18);
+        extraCirclesList.Add(extraCircle19);
+        extraCirclesList.Add(extraCircle20);
+        extraCirclesList.Add(extraCircle21);
+        extraCirclesList.Add(extraCircle22);
+        extraCirclesList.Add(extraCircle23);
+        extraCirclesList.Add(extraCircle24);
+        extraCirclesList.Add(extraCircle25);
+        extraCirclesList.Add(extraCircle26);
+        extraCirclesList.Add(extraCircle27);
+        extraCirclesList.Add(extraCircle28);
+        extraCirclesList.Add(extraCircle29);
+        extraCirclesList.Add(extraCircle30);
         bigsList.Add(big1);
         bigsList.Add(big2);
         bigsList.Add(big3);
@@ -455,6 +519,22 @@ public class Levels : MonoBehaviour
         }
 
     }
+
+    public void ResetExtraCircles() { 
+        for (int i = 0; i < 30; i++) {
+            extraCirclesList[i].GetComponent<DragDropLittle>().ResetCircle();
+            extraCirclesList[i].gameObject.SetActive(false);
+        }
+    }
+    public void EmptyGarbage() {
+        GameObject parent = GameObject.FindWithTag("garbage");
+        foreach (Transform child in parent.transform) {
+            Destroy(child.gameObject);
+        }
+    }
+
+
+
 
     public void setBigsInPlace(int numberOfBigs) { 
         switch (numberOfBigs) {
@@ -847,21 +927,27 @@ public class Levels : MonoBehaviour
     }
 
     public void GoToLevel(int level) {
-        DeleteInstantiatedCircles();
+        GameManager.instance.ResetHistory();
+        //DeleteInstantiatedCircles();
+        ResetExtraCircles();
         ResetNormalCirclesAndBigs();
         GameManager.instance.scoreAtStartOfLevel = GameManager.instance.currentScore;
         GameManager.instance.currentLevelText.text = "Level " + (level + 1).ToString();
         GameManager.instance.currentLevelNumber = level;
         CreateLevel(level, true);
+        EmptyGarbage();
     }
 
     public void RestartLevel() {
+        GameManager.instance.ResetHistory();
         var currentLevel = managerOfTheGame.currentLevelNumber;
-        DeleteInstantiatedCircles();
+        //DeleteInstantiatedCircles();
+        ResetExtraCircles();
         ResetNormalCirclesAndBigs();
         GameManager.instance.currentScore = GameManager.instance.scoreAtStartOfLevel;
         //GameManager.instance.AddPoints(0);
         CreateLevel(currentLevel, true);
+        EmptyGarbage();
     }
 
     public void CreateLevel(int levelNumber, bool ifRandomThenTrue) {
@@ -936,12 +1022,7 @@ public class Levels : MonoBehaviour
         Level2Tutorial.SetActive(false);
     }
 
-    public void DeleteInstantiatedCircles() {
-        for (var i = InstantiatedCirclesParent.gameObject.transform.childCount - 1; i >= 0; i--)          // https://forum.unity.com/threads/how-to-destroy-children-of-a-gameobject.759638/
-        {
-            Object.Destroy(InstantiatedCirclesParent.gameObject.transform.GetChild(i).gameObject);
-        }
-    }
+
 
     public void ResetNormalCirclesAndBigs() { 
         for (int i = 0; i < 10; i++) {
@@ -949,7 +1030,7 @@ public class Levels : MonoBehaviour
         }
         for (int i = 0; i < 6; i++) {
             bigsList[i].GetComponent<MathOperators>().ResetBig();
-            bigsList[i].GetComponent<ColorFlux>().PossiblyStartColorFlux();
+            //bigsList[i].GetComponent<ColorFlux>().PossiblyStartColorFlux();
         }
     }
 
@@ -1112,8 +1193,16 @@ public class Levels : MonoBehaviour
                 AddToBigsList("exponent2", "squareRoot", "subtraction", "multiplication", "split5", "addition");
                 AddToGoalsList(1, 2, 1, 2, 1);
                 AddHints("HINT: multiply, subtract, then split5"); break;
-
-
+            case 22:
+                AddToCirclesList(64, 4, 27, 8);
+                AddToBigsList("division", "cubeRoot", "multiplication", "addition");
+                AddToGoalsList(40);
+                AddHints("HINT: save addition for last"); break;
+            case 23:
+                AddToCirclesList(9, 15, 1, 5);
+                AddToBigsList("subtraction", "subtraction", "split2", "addition", "multiplication");
+                AddToGoalsList(9);
+                AddHints("HINT: try going negative"); break;
 
 
             //case X:
@@ -1171,10 +1260,16 @@ public class Levels : MonoBehaviour
         float value = circlesList[circleNumber].GetComponent<DragDropLittle>().valueOfThisThing;
         bool activeOrNot = circlesList[circleNumber].gameObject.activeSelf;
         Vector3 position = circlesList[circleNumber].transform.position;
+        Vector3 originalPosition = circlesList[circleNumber].GetComponent<DragDropLittle>().originalPosition;
+        int usingWhichMagnet = circlesList[circleNumber].GetComponent<DragDropLittle>().usingWhichMagnet;
+        GameObject objectMagnetizedTo = circlesList[circleNumber].GetComponent<DragDropLittle>().objectMagnetizedTo;
 
         info.Add(value);
         info.Add(activeOrNot);
         info.Add(position);
+        info.Add(originalPosition);
+        info.Add(usingWhichMagnet);
+        info.Add(objectMagnetizedTo);
 
         return info;
     }
@@ -1188,42 +1283,54 @@ public class Levels : MonoBehaviour
         }
         return allCircleInfo;
     }
-    
-    public ArrayList GetInstantiatedCircleInfo(GameObject thingy) {
+    public ArrayList GetExtraCircleInfo(int circleNumber) {
         ArrayList info = new ArrayList();
 
-        float value = thingy.GetComponent<DragDropLittle>().valueOfThisThing;
-        bool activeOrNot = thingy.gameObject.activeSelf;
-        Vector3 position = thingy.transform.position;
+        float value = extraCirclesList[circleNumber].GetComponent<DragDropLittle>().valueOfThisThing;
+        bool activeOrNot = extraCirclesList[circleNumber].gameObject.activeSelf;
+        Vector3 position = extraCirclesList[circleNumber].transform.position;
+        bool beingUsed = extraCirclesList[circleNumber].GetComponent<DragDropLittle>().isThisExtraBeingUsed;
+        Vector3 originalPosition = extraCirclesList[circleNumber].GetComponent<DragDropLittle>().originalPosition;
+        int usingWhichMagnet = extraCirclesList[circleNumber].GetComponent<DragDropLittle>().usingWhichMagnet;
+        GameObject objectMagnetizedTo = extraCirclesList[circleNumber].GetComponent<DragDropLittle>().objectMagnetizedTo;
 
         info.Add(value);
         info.Add(activeOrNot);
         info.Add(position);
+        info.Add(beingUsed);
+        info.Add(originalPosition);
+        info.Add(usingWhichMagnet);
+        info.Add(objectMagnetizedTo);
 
         return info;
     }
-    public ArrayList GetALLInstantiatedCircleInfo() {
-        ArrayList allInstantCircleInfo = new ArrayList();
-        
-        for (var i = InstantiatedCirclesParent.gameObject.transform.childCount - 1; i >= 0; i--) {
+    public ArrayList GetAllExtraCircleInfo() {
+        ArrayList allExtraCircleInfo = new ArrayList();
+        for (int i= 0; i < 30; i++) {
             ArrayList oneSingleCircle = new ArrayList();
-            oneSingleCircle = GetInstantiatedCircleInfo(InstantiatedCirclesParent.gameObject.transform.GetChild(i).gameObject);
-            allInstantCircleInfo.Add(oneSingleCircle);
+            oneSingleCircle = GetExtraCircleInfo(i);
+            allExtraCircleInfo.Add(oneSingleCircle);
         }
-
-        return allInstantCircleInfo;
+        return allExtraCircleInfo;
     }
-
     public ArrayList GetBigsInfo(int bigsNumber) {
         ArrayList info = new ArrayList();
 
         string whatMath = bigsList[bigsNumber].GetComponent<MathOperators>().whatMathDoesThisThingDo;
         bool activeOrNot = bigsList[bigsNumber].gameObject.activeSelf;
         Vector3 position = bigsList[bigsNumber].transform.position;
+        bool magnet1occupied = bigsList[bigsNumber].GetComponent<MathOperators>().magnet1occupied;
+        bool magnet2occupied = bigsList[bigsNumber].GetComponent<MathOperators>().magnet2occupied;
+        float firstNumberValue = bigsList[bigsNumber].GetComponent<MathOperators>().firstNumberValue;
+        float secondNumberValue = bigsList[bigsNumber].GetComponent<MathOperators>().secondNumberValue;
 
         info.Add(whatMath);
         info.Add(activeOrNot);
         info.Add(position);
+        info.Add(magnet1occupied);
+        info.Add(magnet2occupied);
+        info.Add(firstNumberValue);
+        info.Add(secondNumberValue);
 
         return info;
     }
@@ -1237,7 +1344,6 @@ public class Levels : MonoBehaviour
         }
         return allBigsInfo;
     }
-
     public ArrayList GetGoalInfo(int goalNumber) {
         ArrayList info = new ArrayList();
 
@@ -1245,11 +1351,13 @@ public class Levels : MonoBehaviour
         bool goalFulfilled = goalsList[goalNumber].GetComponent<Goal>().goalFulfilled;
         bool activeOrNot = goalsList[goalNumber].gameObject.activeSelf;
         Vector3 position = goalsList[goalNumber].transform.position;
+        Color goalColor = goalsList[goalNumber].GetComponent<SpriteRenderer>().color;
 
         info.Add(goalValue);
         info.Add(goalFulfilled);
         info.Add(activeOrNot);
         info.Add(position);
+        info.Add(goalColor);
 
         return info;
     }
@@ -1266,52 +1374,69 @@ public class Levels : MonoBehaviour
     }
 
 
-
     public void RestoreCircle(ArrayList info, int index) {
         float value = (float)info[0];
         bool activeOrNot = (bool)info[1];
         Vector3 position = (Vector3)info[2];
+        Vector3 originalPosition = (Vector3)info[3];
+        int usingWhichMagnet = (int)info[4];
+        GameObject objectMagnetizedTo = (GameObject)info[5];
+
         circlesList[index].GetComponent<DragDropLittle>().valueOfThisThing = value;
         // have to update the TextMeshPro text, too?
         circlesList[index].gameObject.SetActive(activeOrNot);
         circlesList[index].transform.position = position;
+        circlesList[index].GetComponent<DragDropLittle>().originalPosition = originalPosition;
+        circlesList[index].GetComponent<DragDropLittle>().usingWhichMagnet = usingWhichMagnet;
+        circlesList[index].GetComponent<DragDropLittle>().objectMagnetizedTo = objectMagnetizedTo;
     }
-    public void RestoreALLInstantiatedCircles(ArrayList allIntCircles) {
-        
-
-        for (int i = 0; i < allIntCircles.Count; i++) {
-            ArrayList info = (ArrayList)allIntCircles[i];
-
-            float value = (float)info[0];
-            bool activeOrNot = (bool)info[1];
-            Vector3 position = (Vector3)info[2];
-
-            GameObject oneInstCircle = InstantiatedCirclesParent.gameObject.transform.GetChild(i).gameObject;
-            oneInstCircle.GetComponent<DragDropLittle>().valueOfThisThing = value;
-            oneInstCircle.gameObject.SetActive(activeOrNot);
-            oneInstCircle.transform.position = position;
-
-        }
+    public void RestoreExtraCircle(ArrayList info, int index) {
+        float value = (float)info[0];
+        bool activeOrNot = (bool)info[1];
+        Vector3 position = (Vector3)info[2];
+        bool beingUsed = (bool)info[3];
+        Vector3 originalPosition = (Vector3)info[4];
+        int usingWhichMagnet = (int)info[5];
+        GameObject objectMagnetizedTo = (GameObject)info[6];
 
 
+        extraCirclesList[index].GetComponent<DragDropLittle>().valueOfThisThing = value;
+        extraCirclesList[index].gameObject.SetActive(activeOrNot);
+        extraCirclesList[index].transform.position = position;
+        extraCirclesList[index].GetComponent<DragDropLittle>().isThisExtraBeingUsed = beingUsed;
+        extraCirclesList[index].GetComponent<DragDropLittle>().originalPosition = originalPosition;
+        extraCirclesList[index].GetComponent<DragDropLittle>().usingWhichMagnet = usingWhichMagnet;
+        extraCirclesList[index].GetComponent<DragDropLittle>().objectMagnetizedTo = objectMagnetizedTo;
     }
     public void RestoreBig(ArrayList info, int index) {
         string whatMath = (string)info[0];
         bool activeOrNot = (bool)info[1];
         Vector3 position = (Vector3)info[2];
+        bool magnet1occupied = (bool)info[3];
+        bool magnet2occupied = (bool)info[4];
+        float firstNumberValue = (float)info[5];
+        float secondNumberValue = (float)info[6];
+
         bigsList[index].GetComponent<MathOperators>().whatMathDoesThisThingDo = whatMath;
         bigsList[index].gameObject.SetActive(activeOrNot);
         bigsList[index].transform.position = position;
+        bigsList[index].GetComponent<MathOperators>().magnet1occupied = magnet1occupied;
+        bigsList[index].GetComponent<MathOperators>().magnet2occupied = magnet2occupied;
+        bigsList[index].GetComponent<MathOperators>().firstNumberValue = firstNumberValue;
+        bigsList[index].GetComponent<MathOperators>().secondNumberValue = secondNumberValue;
     }
     public void RestoreGoal(ArrayList info, int index) {
         int goalValue = (int)info[0];
         bool goalFulfilled = (bool)info[1];
         bool activeOrNot = (bool)info[2];
         Vector3 position = (Vector3)info[3];
+        Color goalColor = (Color)info[4];
+
         goalsList[index].GetComponent<Goal>().goalNumber = goalValue;
         goalsList[index].GetComponent<Goal>().goalFulfilled = goalFulfilled;
         goalsList[index].gameObject.SetActive(activeOrNot);
         goalsList[index].transform.position = position;
+        goalsList[index].GetComponent<SpriteRenderer>().color = goalColor;
     }
 
 

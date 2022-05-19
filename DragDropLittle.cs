@@ -8,6 +8,10 @@ public class DragDropLittle : MonoBehaviour
     public GameManager gameManager;
 
     public float valueOfThisThing;
+    public bool isThisAnExtraCircle = false;
+    public bool isThisExtraBeingUsed = false;
+
+
     private float radius;
 
     public Vector3 originalPosition;
@@ -30,7 +34,7 @@ public class DragDropLittle : MonoBehaviour
 
     Vector2 screenBounds;       // this one works best i think, https://forum.unity.com/threads/trying-to-clamp-player-to-stay-on-screen.634264/
 
-    public GameObject whatThisTransformsInto;
+    //public GameObject whatThisTransformsInto;
 
     public Color goalColor;
 
@@ -114,9 +118,11 @@ public class DragDropLittle : MonoBehaviour
                         //GameManager.instance.AddPoints(1);
                         //Destroy(gameObject);
                         gameObject.SetActive(false);
+                        GameManager.instance.backButton.SetActive(true);
                         gameManager.checkIfLevelIsOver();
 
                         GameManager.instance.TakeSnapshot();
+
 
                         break;
                     }
@@ -129,6 +135,26 @@ public class DragDropLittle : MonoBehaviour
             lastClickTime = Time.time;
         }
     }
+
+    public GameObject GrabExtraCircle() {
+        List<GameObject> listOfExtraCircles = GameManager.instance.GetComponent<GameManager>().repOfLevels.GetComponent<Levels>().extraCirclesList;
+        GameObject extraCircleToUse = new GameObject();
+        GameObject parent = GameObject.FindWithTag("garbage");
+        extraCircleToUse.transform.SetParent(parent.transform);
+        for (int i = 0; i < 30; i++)
+        {
+            if (listOfExtraCircles[i].GetComponent<DragDropLittle>().isThisExtraBeingUsed == false)
+            {
+                extraCircleToUse = listOfExtraCircles[i];
+                listOfExtraCircles[i].GetComponent<DragDropLittle>().isThisExtraBeingUsed = true;
+                break;
+            }
+        }
+        extraCircleToUse.gameObject.SetActive(true);
+
+        return extraCircleToUse;
+    }
+
 
     private void OnMouseUp()
     {
@@ -150,7 +176,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<MathOperators>().firstNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
                 encounteredObject.GetComponent<MathOperators>().CompleteMath();
-                GameManager.instance.TakeSnapshot();
+                //GameManager.instance.TakeSnapshot();
             }
             else if (encounteredObject.GetComponent<MathOperators>().magnet2occupied == false)
             {
@@ -165,7 +191,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<MathOperators>().secondNumberValue = valueOfThisThing;
                 encounteredObject.GetComponent<SpriteRenderer>().color = new Color(0.6274f, 0.6274f, 0.6274f, 1);
                 encounteredObject.GetComponent<MathOperators>().CompleteMath();
-                GameManager.instance.TakeSnapshot();
+                //GameManager.instance.TakeSnapshot();
             }
             else
             {
@@ -192,118 +218,151 @@ public class DragDropLittle : MonoBehaviour
             encounteredObject.gameObject.SetActive(false);
             //Destroy(gameObject);        // destroy original number
 
-
             if (splitAmount == 2)
             {
                 var newNum = valueOfThisThing / 2.0f;
-                var newNum1 = Instantiate(whatThisTransformsInto, spawnPoint1, whatThisTransformsInto.transform.rotation);
-                var newNum2 = Instantiate(whatThisTransformsInto, spawnPoint2, whatThisTransformsInto.transform.rotation);
-                newNum1.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum2.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+
+                GameObject extraCircle1 = GrabExtraCircle();
+                extraCircle1.transform.position = spawnPoint1;
+                extraCircle1.GetComponent<DragDropLittle>().originalPosition = spawnPoint1;
+
+                GameObject extraCircle2 = GrabExtraCircle();
+                extraCircle2.transform.position = spawnPoint2;
+                extraCircle2.GetComponent<DragDropLittle>().originalPosition = spawnPoint2;
+
+                extraCircle1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
                 //newNum1.GetComponent<DragDropLittle>().encounteredObject = null;
                 if (newNum % 1 == 0)
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
                 }
                 else
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
                 }
             }
             else if (splitAmount == 3)
             {
                 var newNum = valueOfThisThing / 3.0f;
-                var newNum1 = Instantiate(whatThisTransformsInto, spawnPoint1, whatThisTransformsInto.transform.rotation);
-                var newNum2 = Instantiate(whatThisTransformsInto, spawnPoint2, whatThisTransformsInto.transform.rotation);
-                var newNum3 = Instantiate(whatThisTransformsInto, spawnPoint3, whatThisTransformsInto.transform.rotation);
-                newNum1.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum2.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum3.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+
+                GameObject extraCircle1 = GrabExtraCircle();
+                extraCircle1.transform.position = spawnPoint1;
+                extraCircle1.GetComponent<DragDropLittle>().originalPosition = spawnPoint1;
+
+                GameObject extraCircle2 = GrabExtraCircle();
+                extraCircle2.transform.position = spawnPoint2;
+                extraCircle2.GetComponent<DragDropLittle>().originalPosition = spawnPoint2;
+
+                GameObject extraCircle3 = GrabExtraCircle();
+                extraCircle3.transform.position = spawnPoint3;
+                extraCircle3.GetComponent<DragDropLittle>().originalPosition = spawnPoint3;
+
+                extraCircle1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
                 if (newNum % 1 == 0)
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
                 }
                 else
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
                 }
             }
             else if (splitAmount == 4)
             {
                 var newNum = valueOfThisThing / 4.0f;
-                var newNum1 = Instantiate(whatThisTransformsInto, spawnPoint1, whatThisTransformsInto.transform.rotation);
-                var newNum2 = Instantiate(whatThisTransformsInto, spawnPoint2, whatThisTransformsInto.transform.rotation);
-                var newNum3 = Instantiate(whatThisTransformsInto, spawnPoint3, whatThisTransformsInto.transform.rotation);
-                var newNum4 = Instantiate(whatThisTransformsInto, spawnPoint4, whatThisTransformsInto.transform.rotation);
-                newNum1.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum2.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum3.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum4.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum4.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+
+                GameObject extraCircle1 = GrabExtraCircle();
+                extraCircle1.transform.position = spawnPoint1;
+                extraCircle1.GetComponent<DragDropLittle>().originalPosition = spawnPoint1;
+
+                GameObject extraCircle2 = GrabExtraCircle();
+                extraCircle2.transform.position = spawnPoint2;
+                extraCircle2.GetComponent<DragDropLittle>().originalPosition = spawnPoint2;
+
+                GameObject extraCircle3 = GrabExtraCircle();
+                extraCircle3.transform.position = spawnPoint3;
+                extraCircle3.GetComponent<DragDropLittle>().originalPosition = spawnPoint3;
+
+                GameObject extraCircle4 = GrabExtraCircle();
+                extraCircle4.transform.position = spawnPoint4;
+                extraCircle4.GetComponent<DragDropLittle>().originalPosition = spawnPoint4;
+
+                extraCircle1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle4.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
                 if (newNum % 1 == 0)
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
                 }
                 else
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
                 }
             }
             else if (splitAmount == 5)
             {
                 var newNum = valueOfThisThing / 5.0f;
-                var newNum1 = Instantiate(whatThisTransformsInto, spawnPoint1, whatThisTransformsInto.transform.rotation);
-                var newNum2 = Instantiate(whatThisTransformsInto, spawnPoint2, whatThisTransformsInto.transform.rotation);
-                var newNum3 = Instantiate(whatThisTransformsInto, spawnPoint3, whatThisTransformsInto.transform.rotation);
-                var newNum4 = Instantiate(whatThisTransformsInto, spawnPoint4, whatThisTransformsInto.transform.rotation);
-                var newNum5 = Instantiate(whatThisTransformsInto, spawnPoint5, whatThisTransformsInto.transform.rotation);
-                newNum1.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum2.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum3.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum4.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum5.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
-                newNum1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum4.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
-                newNum5.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+
+                GameObject extraCircle1 = GrabExtraCircle();
+                extraCircle1.transform.position = spawnPoint1;
+                extraCircle1.GetComponent<DragDropLittle>().originalPosition = spawnPoint1;
+
+                GameObject extraCircle2 = GrabExtraCircle();
+                extraCircle2.transform.position = spawnPoint2;
+                extraCircle2.GetComponent<DragDropLittle>().originalPosition = spawnPoint2;
+
+                GameObject extraCircle3 = GrabExtraCircle();
+                extraCircle3.transform.position = spawnPoint3;
+                extraCircle3.GetComponent<DragDropLittle>().originalPosition = spawnPoint3;
+
+                GameObject extraCircle4 = GrabExtraCircle();
+                extraCircle4.transform.position = spawnPoint4;
+                extraCircle4.GetComponent<DragDropLittle>().originalPosition = spawnPoint4;
+
+                GameObject extraCircle5 = GrabExtraCircle();
+                extraCircle5.transform.position = spawnPoint5;
+                extraCircle5.GetComponent<DragDropLittle>().originalPosition = spawnPoint5;
+
+                extraCircle1.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle2.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle3.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle4.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
+                extraCircle5.GetComponent<DragDropLittle>().valueOfThisThing = newNum;
                 if (newNum % 1 == 0)
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
-                    newNum5.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
+                    extraCircle5.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F0");
                 }
                 else
                 {
-                    newNum1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
-                    newNum5.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle1.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle2.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle3.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle4.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
+                    extraCircle5.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = newNum.ToString("F2");
                 }
             }
+
+
             //// destroy the original objects
             ////Destroy(encounteredObject.gameObject);
             //encounteredObject.gameObject.SetActive(false);
@@ -311,6 +370,7 @@ public class DragDropLittle : MonoBehaviour
             //gameObject.SetActive(false);
             gameObject.SetActive(false);
             GameManager.instance.TakeSnapshot();
+            GameManager.instance.backButton.SetActive(true);
 
         }
         else if (encounteredObject != null && encounteredObject.gameObject.CompareTag("goal"))
@@ -321,6 +381,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<Goal>().MarkGoalAsFulfilled();                
                 gameObject.SetActive(false);
                 GameManager.instance.TakeSnapshot();
+                GameManager.instance.backButton.SetActive(true);
             }
             else if (encounteredObject.GetComponent<Goal>().goalFulfilled == true)
             {
@@ -459,6 +520,9 @@ public class DragDropLittle : MonoBehaviour
         encounteredObject = null;
         objectMagnetizedTo = null;
         usingWhichMagnet = 0;
+        if (isThisAnExtraCircle) {
+            isThisExtraBeingUsed = false;
+        }
 }
 
 

@@ -5,6 +5,8 @@ using TMPro;
 
 public class MathOperators : MonoBehaviour
 {
+    public GameObject repOfLevels;
+    
     public Vector3 selfMagnet1;
     public Vector3 selfMagnet2;
     //public Vector3 selfMagnet1offset;
@@ -50,9 +52,7 @@ public class MathOperators : MonoBehaviour
     }
 
     public void ResetBig() {
-        magnet1occupied = false;
-        magnet2occupied = false;
-        gameObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
+        //gameObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
         firstNumber = null;
         secondNumber = null;
     }
@@ -62,8 +62,30 @@ public class MathOperators : MonoBehaviour
         {
             Vector3 tempVector3 = transform.position;
             tempVector3.z = 1;
-            var newNum = Instantiate(whatThisTransformsInto, tempVector3, whatThisTransformsInto.transform.rotation);
-            newNum.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
+
+            GameObject extraCircleToUse = new GameObject();
+            GameObject parent = GameObject.FindWithTag("garbage");
+            extraCircleToUse.transform.SetParent(parent.transform);
+            // find first available extraCircle
+            List<GameObject> listOfExtraCircles = repOfLevels.GetComponent<Levels>().extraCirclesList;
+            for (int i = 0; i < 30; i++) { 
+                if (listOfExtraCircles[i].GetComponent<DragDropLittle>().isThisExtraBeingUsed == false) {
+                    extraCircleToUse = listOfExtraCircles[i];
+                    extraCircleToUse.GetComponent<DragDropLittle>().isThisExtraBeingUsed = true;
+                    break;
+                }
+            }
+            extraCircleToUse.gameObject.SetActive(true);
+            extraCircleToUse.transform.position = tempVector3;
+            extraCircleToUse.GetComponent<DragDropLittle>().originalPosition = tempVector3;
+
+
+
+
+
+            //var newNum = Instantiate(whatThisTransformsInto, tempVector3, whatThisTransformsInto.transform.rotation);
+            //repOfLevels.GetComponent<Levels>().AddInstantiatedObjectToTheList(newNum);
+            //newNum.transform.SetParent(GameObject.FindGameObjectWithTag("InstantiatedCirclesParent").transform);
             switch (whatMathDoesThisThingDo)
             {
                 case "addition":
@@ -100,25 +122,25 @@ public class MathOperators : MonoBehaviour
             {
                 // we want the Floor value
                 //Debug.Log("We want the FLOOR value");
-                newNum.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Floor(result);
-                newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Floor(result).ToString("F0");
+                extraCircleToUse.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Floor(result);
+                extraCircleToUse.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Floor(result).ToString("F0");
             }
             else if ((Mathf.Ceil(result) - result) < marginOfError)
             {
                 // we want the Ceiling value
                 //Debug.Log("We want the CEILING value");
-                newNum.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Ceil(result);
-                newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Ceil(result).ToString("F0");
+                extraCircleToUse.GetComponent<DragDropLittle>().valueOfThisThing = Mathf.Ceil(result);
+                extraCircleToUse.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = Mathf.Ceil(result).ToString("F0");
             }
             else if (result % 1 == 0)
             {
-                newNum.GetComponent<DragDropLittle>().valueOfThisThing = result;
-                newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F0");
+                extraCircleToUse.GetComponent<DragDropLittle>().valueOfThisThing = result;
+                extraCircleToUse.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F0");
             }
             else
             {
-                newNum.GetComponent<DragDropLittle>().valueOfThisThing = result;
-                newNum.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F2");
+                extraCircleToUse.GetComponent<DragDropLittle>().valueOfThisThing = result;
+                extraCircleToUse.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = result.ToString("F2");
             }
 
             //// destroy child object
@@ -132,6 +154,8 @@ public class MathOperators : MonoBehaviour
                 secondNumber.SetActive(false);
             }
             gameObject.SetActive(false);
+            GameManager.instance.TakeSnapshot();
+            GameManager.instance.backButton.SetActive(true);
         }
     }
 

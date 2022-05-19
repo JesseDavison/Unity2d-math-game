@@ -65,7 +65,7 @@ public class LevelSelector2 : MonoBehaviour
         if (gridAlreadySetup == false) {
             SetupGrid(levelHolder);
         }
-        LoadIcons(numberOfLevels, levelHolder);
+        LoadIcons(numberOfLevels, levelHolder);     // doing this only adds more icons ... which we don't want
     }
 
     void SetupGrid(GameObject panel)
