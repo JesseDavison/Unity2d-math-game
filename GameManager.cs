@@ -68,6 +68,14 @@ public class GameManager : MonoBehaviour
 
     public GameObject settingsUI;
 
+    public string mostRecentKillFeedString;
+    public GameObject KillFeedBackground;
+    public TextMeshProUGUI KillFeed;
+
+    public TextMeshProUGUI thisLevelScoreText;
+    public GameObject LevelScore;
+    public TextMeshProUGUI MainMenuTotalScore;
+    public TextMeshProUGUI MainMenuAverageScore;
 
 
 
@@ -76,6 +84,7 @@ public class GameManager : MonoBehaviour
         instance = this;
         repOfLevels = GameObject.Find("Level Creator").GetComponent<Levels>();
         currentLevelNumber = -1;
+        UpdateMainMenuScoreStuff();
 
         // count up the number of levels completed
         CountNumberOfLevelsCompleted();
@@ -136,6 +145,7 @@ public class GameManager : MonoBehaviour
         instance = this;
         repOfLevels = GameObject.Find("Level Creator").GetComponent<Levels>();
         currentLevelNumber = -1;
+        UpdateMainMenuScoreStuff();
 
         // count up the number of levels completed
         CountNumberOfLevelsCompleted();
@@ -290,11 +300,15 @@ public class GameManager : MonoBehaviour
             Level2Tutorial.SetActive(false);
             
             if (currentLevelNumber == 1 && PlayerPrefs.GetInt("TutorialsActivated") == 1) {
-                restartLevelButton.GetComponent<ColorFluxButton>().StopColorFlux();
-                FlashingTextForTutorial.GetComponent<ColorFluxText>().StopColorFlux();
+                //restartLevelButton.GetComponent<ColorFluxButton>().StopColorFlux();
+                //FlashingTextForTutorial.GetComponent<ColorFluxText>().StopColorFlux();
             }
 
+            SetLevelAsCompleted();
             UpdateLevelCompletionInfo();
+            UpdateKillFeed("  ");
+            KillFeedBackground.SetActive(false);
+            ResetHistory();
             
 
 
@@ -379,6 +393,7 @@ public class GameManager : MonoBehaviour
         Level1Tutorial.SetActive(false);
         Level2Tutorial.SetActive(false);
         settingsUI.SetActive(false);
+        UpdateMainMenuScoreStuff();
     }
 
     public void TutorialsActivate() {           
@@ -421,6 +436,73 @@ public class GameManager : MonoBehaviour
         levelSelectContentPanel.GetComponent<LevelSelector2>().ReloadIconColors();
     }
 
+    public void ContributeToKillFeed(string whichMath, float firstNum, float secondNum, float result) {
+        
+        string NumToString(float num) {
+            string toReturn = "";
+            var marginOfError = 0.001f;
+            if ((num - Mathf.Floor(num)) < marginOfError) {
+                toReturn = Mathf.Floor(num).ToString("F0");
+            } else if ((Mathf.Ceil(num) - num) < marginOfError) {
+                toReturn = Mathf.Ceil(num).ToString("F0");
+            } else if (num % 1 == 0) {
+                toReturn = num.ToString("F0");
+            } else {
+                toReturn = num.ToString("F2");
+            }
+            return toReturn;
+        }
+        
+        switch (whichMath) {
+            case "addition":
+                mostRecentKillFeedString = NumToString(firstNum) + " + " + NumToString(secondNum) + " = " + NumToString(result); break;
+            case "subtraction":
+                mostRecentKillFeedString = NumToString(firstNum) + " - " + NumToString(secondNum) + " = " + NumToString(result); break;
+            case "multiplication":
+                mostRecentKillFeedString = NumToString(firstNum) + " * " + NumToString(secondNum) + " = " + NumToString(result); break;
+            case "division":
+                mostRecentKillFeedString = NumToString(firstNum) + " / " + NumToString(secondNum) + " = " + NumToString(result); break;
+            case "exponent2":
+                mostRecentKillFeedString = NumToString(firstNum) + " ^ 2 = " + NumToString(result); break;
+            case "exponent3":
+                mostRecentKillFeedString = NumToString(firstNum) + " ^ 3 = " + NumToString(result); break;
+            case "exponent4":
+                mostRecentKillFeedString = NumToString(firstNum) + " ^ 4 = " + NumToString(result); break;
+            case "squareRoot":
+                mostRecentKillFeedString = NumToString(firstNum) + " ^ 0.5 = " + NumToString(result); break;
+            case "cubeRoot":
+                mostRecentKillFeedString = NumToString(firstNum) + " ^ 0.33 = " + NumToString(result); break;
+            case "split":
+                if (firstNum == 2) {
+                    mostRecentKillFeedString = NumToString(secondNum) + " split into 2x " + NumToString((float)(secondNum / 2.0));
+                } else if (firstNum == 3) {
+                    mostRecentKillFeedString = NumToString(secondNum) + " split into 3x " + NumToString((float)(secondNum / 3.0));
+                } else if (firstNum == 4) {
+                    mostRecentKillFeedString = NumToString(secondNum) + " split into 4x " + NumToString((float)(secondNum / 4.0));
+                } else if (firstNum == 5) {
+                    mostRecentKillFeedString = NumToString(secondNum) + " split into 5x " + NumToString((float)(secondNum / 5.0));
+                } break;
+        }
+        UpdateKillFeed("");
+    }
+    public void UpdateKillFeed(string theText) {
+        if (theText == "") {
+            ToggleKillFeedActive(true);
+            KillFeed.text = mostRecentKillFeedString;
+        } else {
+            ToggleKillFeedActive(false);
+            mostRecentKillFeedString = theText;
+            KillFeed.text = theText;
+        }
+    }
+    public void ToggleKillFeedActive(bool boolie) {
+        KillFeedBackground.SetActive(boolie);
+    }
+
+
+
+
+
 
     //public IEnumerator DelayLoad()
     //{
@@ -440,6 +522,121 @@ public class GameManager : MonoBehaviour
 
 
     //}
+
+
+    // example:
+    //      Level_0_Completed
+
+    public void SetLevelAsCompleted() {
+        string temp = "Level_";
+        temp = temp + currentLevelNumber.ToString() + "_Completed";
+        PlayerPrefs.SetInt(temp, 1);
+    }
+    public void SetLevelAsNOTCompleted(int levelNum) {
+        string temp = "Level_";
+        temp = temp + levelNum.ToString() + "_Completed";
+        PlayerPrefs.SetInt(temp, 0);
+    }
+    public void SetALLLevelsAsNotCompleted() {
+        for (int i = 0; i <= highestLevelNumberThatExists; i++)
+        {
+            SetLevelAsNOTCompleted(i);
+        }
+    }
+    public bool CheckIfLevelIsCompleted(int levelNum) {
+        string temp = "Level_";
+        temp = temp + levelNum.ToString() + "_Completed";
+        //Debug.Log("the string in CheckIfLevelIsCompleted: " + temp);
+        if (PlayerPrefs.GetInt(temp) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public int GetLevelScore(int levelNum) {
+        string temp = "Level_";
+        temp = temp + levelNum.ToString() + "_Score";
+        int toReturn = PlayerPrefs.GetInt(temp);
+        return toReturn;
+    }
+    public void SetLevelScore(int levelNum, int newScore) {
+        string temp = "Level_";
+        temp = temp + levelNum.ToString() + "_Score";
+        PlayerPrefs.SetInt(temp, newScore);
+        UpdateScoreDisplay();
+        UpdateMainMenuScoreStuff();
+    }
+    public void UpdateScoreDisplay() {
+        thisLevelScoreText.text = "points: " + GetLevelScore(currentLevelNumber).ToString();
+    }
+    public void UpdateScoreToCompleted() {
+        thisLevelScoreText.text = "Final: " + GetLevelScore(currentLevelNumber).ToString();
+    }
+    public void HideScoreDisplay() {
+        LevelScore.SetActive(false);
+    }
+    public void ShowScoreDisplay() {
+        LevelScore.SetActive(true);
+    }
+    public void ReduceScore(int points) {
+        if (CheckIfLevelIsCompleted(currentLevelNumber)) {
+            // if the level has been completed previously, then do nothing here
+        }
+        else {
+            SetLevelScore(currentLevelNumber, GetLevelScore(currentLevelNumber) - points);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public void UpdateTotalScore() {
+        int runningTotal = 0;
+        for (int i = 0; i <= highestLevelNumberThatExists; i++) {
+            if (CheckIfLevelIsCompleted(i)) {
+                runningTotal += GetLevelScore(i);
+            }
+        }
+        MainMenuTotalScore.text = "Total Points                           " + runningTotal.ToString();
+    }
+    public void UpdateAverageScorePerLevel() {
+        int runningTotal = 0;
+        for (int i = 0; i <= highestLevelNumberThatExists; i++) {
+            if (CheckIfLevelIsCompleted(i)) {
+                runningTotal += GetLevelScore(i);
+            }
+        }
+        int levelsCompleted = 0;
+        for (int i = 0; i <= highestLevelNumberThatExists; i++) { 
+            if (CheckIfLevelIsCompleted(i)) {
+                levelsCompleted += 1;
+            }
+        }
+        float avg = 0.0f;
+        if (levelsCompleted != 0) {
+            avg = (float)((runningTotal * 1.1) / (levelsCompleted * 1.1));
+        }
+        if (avg == 100) {
+            MainMenuAverageScore.text = "Average Points per Level     " + avg.ToString("F0");
+        } else {
+            MainMenuAverageScore.text = "Average Points per Level     " + avg.ToString("F1");
+        }
+        
+
+    }
+    public void UpdateMainMenuScoreStuff() {
+        UpdateTotalScore();
+        UpdateAverageScorePerLevel();
+    }
+
+
+
 
 
 
@@ -526,6 +723,8 @@ public class GameManager : MonoBehaviour
         goalsInfo = repOfLevels.GetALLGoalsInfo();
         thisSnapshot.Add(goalsInfo);                            // History[4][3][1][3] is the second [1] goal's position [3] at pointInHistory 4
 
+        thisSnapshot.Add(mostRecentKillFeedString);
+
         // after everything is gathered:
         pointInHistory++;   // use this as an index for retrieving from History
         History.Add(thisSnapshot);
@@ -564,6 +763,9 @@ public class GameManager : MonoBehaviour
         ExtraCircles = (ArrayList)ToLoad[1];
         Bigs = (ArrayList)ToLoad[2];
         Goals = (ArrayList)ToLoad[3];
+        mostRecentKillFeedString = (string)ToLoad[4];
+        UpdateKillFeed("");
+
 
         for (int i = 0; i < 10; i++) {
             repOfLevels.RestoreCircle((ArrayList)Circles[i], i);

@@ -36,6 +36,7 @@ public class ResetProgress : MonoBehaviour
         GameManager.instance.allLevelsAreCompleted = false;
 
         GameManager.instance.UpdateLevelCompletionInfo();
+        GameManager.instance.SetALLLevelsAsNotCompleted();
         //reload the main menu UI if necessary????
         GameManager.instance.Awake();
     }

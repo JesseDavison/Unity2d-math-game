@@ -934,7 +934,7 @@ public class Levels : MonoBehaviour
         GameManager.instance.scoreAtStartOfLevel = GameManager.instance.currentScore;
         GameManager.instance.currentLevelText.text = "Level " + (level + 1).ToString();
         GameManager.instance.currentLevelNumber = level;
-        CreateLevel(level, true);
+        CreateLevel(level, true, false);
         EmptyGarbage();
     }
 
@@ -946,11 +946,12 @@ public class Levels : MonoBehaviour
         ResetNormalCirclesAndBigs();
         GameManager.instance.currentScore = GameManager.instance.scoreAtStartOfLevel;
         //GameManager.instance.AddPoints(0);
-        CreateLevel(currentLevel, true);
+        //GameManager.instance.ReduceScore(2);
+        CreateLevel(currentLevel, true, true);
         EmptyGarbage();
     }
 
-    public void CreateLevel(int levelNumber, bool ifRandomThenTrue) {
+    public void CreateLevel(int levelNumber, bool ifRandomThenTrue, bool isThisARestart) {
         //Debug.Log("started CreateLevel fuction");
         var levelInfo = new ArrayList();
         // grab the level info from LevelDefinitions, then parse it and start the level
@@ -959,10 +960,34 @@ public class Levels : MonoBehaviour
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
         List<string> hints = new List<string>();
+        int movesAllowance = 0;
         circles = (List<int>)levelInfo[0];
         bigs = (List<string>)levelInfo[1];
         goals = (List<int>)levelInfo[2];
         hints = (List<string>)levelInfo[3];
+        movesAllowance = (int)levelInfo[4];
+        GameManager.instance.UpdateKillFeed("  ");
+
+        //check if the points for this level are finalized
+        //      if they are, then display the score, e.g., "final: 99"
+        //      if not, then display the default score, e.g., "points: 107" where 107 comes from 100 + the allowance (movesAllowance)
+        
+        if (isThisARestart == false) {
+            bool levelDone = GameManager.instance.CheckIfLevelIsCompleted(levelNumber);
+            if (levelDone)
+            {
+                GameManager.instance.UpdateScoreToCompleted();
+            }
+            else
+            {
+                GameManager.instance.SetLevelScore(levelNumber, (int)(100 + movesAllowance));
+            }
+            GameManager.instance.ShowScoreDisplay();
+        }
+
+
+
+
 
         numberOfCircles = circles.Count;
         //Debug.Log("numberOfCircles: " + numberOfCircles);
@@ -1008,11 +1033,11 @@ public class Levels : MonoBehaviour
             } else if (levelNumber == 1) {
                 Level2Tutorial.SetActive(true);
                 // turn on flashing red Restart Level button
-                RestartLevelButton.GetComponent<ColorFluxButton>().StartColorFlux();
-                FlashingTextForTutorial.GetComponent<ColorFluxText>().StartColorFlux();
+                //RestartLevelButton.GetComponent<ColorFluxButton>().StartColorFlux();
+                //FlashingTextForTutorial.GetComponent<ColorFluxText>().StartColorFlux();
             }
         }
-
+        //GameManager.instance.UpdateKillFeed("  ");
         GameManager.instance.TakeSnapshot();
 
     }
@@ -1040,6 +1065,7 @@ public class Levels : MonoBehaviour
         List<string> bigs = new List<string>();
         List<int> goals = new List<int>();
         List<string> hints = new List<string>();
+        int numberMoves = 0;
 
         void AddToCirclesList(params int[] list) {
             for (int i = 0; i < list.Length; i++) {
@@ -1060,6 +1086,9 @@ public class Levels : MonoBehaviour
             for (int i = 0; i < list.Length; i++) {
                 hints.Add(list[i]);
             }
+        }
+        void AddNumberOfMoves(int numberOfMoves) {
+            numberMoves = numberOfMoves;
         }
         void RandomizeIntList(List<int> sourceList, List<int> destinationList) {
             int lengthOfSource = sourceList.Count;
@@ -1087,122 +1116,146 @@ public class Levels : MonoBehaviour
                 AddToCirclesList(7);
                 AddToBigsList("exponent2");
                 AddToGoalsList(49);
-                AddHints("HINT: 7 squared = 7 * 7"); break;
+                AddHints("HINT: 7 squared = 7 * 7");
+                AddNumberOfMoves(2); break;
             case 1:
                 AddToCirclesList(6, 2, 3);
                 AddToBigsList("division", "division");
                 AddToGoalsList(1);
-                AddHints("HINT: start with 6"); break;
+                AddHints("HINT: start with 6");
+                AddNumberOfMoves(3); break;
             case 2:
                 AddToCirclesList(5, 3);
                 AddToBigsList("addition", "cubeRoot");
                 AddToGoalsList(2);
-                AddHints("HINT: plus first"); break;
+                AddHints("HINT: plus first");
+                AddNumberOfMoves(3); break;
             case 3:
                 AddToCirclesList(9, 3, 4);
                 AddToBigsList("multiplication", "subtraction");
                 AddToGoalsList(23);
-                AddHints("HINT: 27 - 4 = 23"); break;
+                AddHints("HINT: 27 - 4 = 23");
+                AddNumberOfMoves(3); break;
             case 4:
                 AddToCirclesList(6, 5, 4);
                 AddToBigsList("exponent2", "exponent2", "exponent2");
                 AddToGoalsList(36, 25, 16);
-                AddHints("HINT: drink more water"); break;
+                AddHints("HINT: drink more water");
+                AddNumberOfMoves(6); break;
             case 5:
                 AddToCirclesList(4, 6, 5);
                 AddToBigsList("exponent4", "squareRoot", "subtraction", "division");
                 AddToGoalsList(2);
-                AddHints("HINT: get a 10"); break;
+                AddHints("HINT: get a 10");
+                AddNumberOfMoves(5); break;
             case 6:
                 AddToCirclesList(10, 10, 8, 2, 8);
                 AddToBigsList("addition", "division", "addition", "squareRoot");
                 AddToGoalsList(4, 10);
-                AddHints("HINT: the tens are redundant"); break;
+                AddHints("HINT: the tens are redundant");
+                AddNumberOfMoves(6); break;
             case 7:
                 AddToCirclesList(64, 14, 2, 2);
                 AddToBigsList("cubeRoot", "division", "division");
                 AddToGoalsList(2, 7);
-                AddHints("HINT: denominator twos"); break;
+                AddHints("HINT: denominator twos");
+                AddNumberOfMoves(5); break;
             case 8:
                 AddToCirclesList(9, 13);
                 AddToBigsList("squareRoot", "split3", "addition", "division", "addition");
                 AddToGoalsList(7);
-                AddHints("HINT: everyone has a plus"); break;
+                AddHints("HINT: everyone has a plus");
+                AddNumberOfMoves(6); break;
             case 9:
                 AddToCirclesList(1, 3, 6, 21);
                 AddToBigsList("split3", "multiplication", "multiplication", "multiplication", "addition", "multiplication");
                 AddToGoalsList(21);
-                AddHints("HINT: Find one-third of 21"); break;
+                AddHints("HINT: Find one-third of 21");
+                AddNumberOfMoves(7); break;
             case 10:
                 AddToCirclesList(5, 10, 2, 1);
                 AddToBigsList("subtraction", "division", "multiplication");
                 AddToGoalsList(24);
-                AddHints("HINT: multiply first"); break;
+                AddHints("HINT: multiply first");
+                AddNumberOfMoves(4); break;
             case 11:
                 AddToCirclesList(9, 4, 3, 3, 4);
                 AddToBigsList("multiplication", "addition", "division", "addition");
                 AddToGoalsList(17);
-                AddHints("HINT: 39"); break;
+                AddHints("HINT: 39");
+                AddNumberOfMoves(5); break;
             case 12:
                 AddToCirclesList(19, 15, 3, 5);
                 AddToBigsList("multiplication", "division", "division");
                 AddToGoalsList(19);
-                AddHints("HINT: it's just 19"); break;
+                AddHints("HINT: it's just 19");
+                AddNumberOfMoves(4); break;
             case 13:
                 AddToCirclesList(17, 1);
                 AddToBigsList("subtraction", "split4", "division", "addition");
                 AddToGoalsList(1, 8);
-                AddHints("HINT: try for four fours"); break;
+                AddHints("HINT: try for four fours");
+                AddNumberOfMoves(6); break;
             case 14:
                 AddToCirclesList(30);
                 AddToBigsList("split5", "division", "subtraction", "addition", "multiplication");
                 AddToGoalsList(60);
-                AddHints("HINT: 6 - 1"); break;
+                AddHints("HINT: 6 - 1");
+                AddNumberOfMoves(6); break;
             case 15:
                 AddToCirclesList(21);
                 AddToBigsList("split3", "multiplication", "addition", "split4", "division");
                 AddToGoalsList(14, 1, 14);
-                AddHints("HINT: 56"); break;
+                AddHints("HINT: 56");
+                AddNumberOfMoves(8); break;
             case 16:
                 AddToCirclesList(1, 3);
                 AddToBigsList("exponent4", "addition", "split2");
                 AddToGoalsList(41, 41);
-                AddHints("HINT: 81"); break;
+                AddHints("HINT: 81");
+                AddNumberOfMoves(5); break;
             case 17:
                 AddToCirclesList(2, 1);
                 AddToBigsList("squareRoot", "exponent4", "addition", "exponent2");
-                AddToGoalsList(25);
-                AddHints("HINT: exponentiate first"); break;
+                AddToGoalsList(5);
+                AddHints("HINT: exponentiate first");
+                AddNumberOfMoves(44); break;
             case 18:
                 AddToCirclesList(14, 4);
                 AddToBigsList("split2", "division", "split2", "division", "subtraction");
                 AddToGoalsList(1);
-                AddHints("HINT: split the 4"); break;
+                AddHints("HINT: split the 4");
+                AddNumberOfMoves(6); break;
             case 19:
                 AddToCirclesList(8, 5, 6, 4);
                 AddToBigsList("addition", "multiplication", "split2", "subtraction", "division");
                 AddToGoalsList(17);
-                AddHints("HINT: 55 - 4"); break;
+                AddHints("HINT: 55 - 4");
+                AddNumberOfMoves(6); break;
             case 20:
                 AddToCirclesList(20, 7, 1, 6);
                 AddToBigsList("exponent2", "split2", "addition", "addition", "subtraction", "division");
                 AddToGoalsList(1);
-                AddHints("HINT: 17 is the key"); break;
+                AddHints("HINT: 17 is the key");
+                AddNumberOfMoves(7); break;
             case 21:
                 AddToCirclesList(11, 4, 1, 16);
                 AddToBigsList("exponent2", "squareRoot", "subtraction", "multiplication", "split5", "addition");
                 AddToGoalsList(1, 2, 1, 2, 1);
-                AddHints("HINT: multiply, subtract, then split5"); break;
+                AddHints("HINT: multiply, subtract, then split5");
+                AddNumberOfMoves(11); break;
             case 22:
                 AddToCirclesList(64, 4, 27, 8);
                 AddToBigsList("division", "cubeRoot", "multiplication", "addition");
                 AddToGoalsList(40);
-                AddHints("HINT: save addition for last"); break;
+                AddHints("HINT: save addition for last");
+                AddNumberOfMoves(5); break;
             case 23:
                 AddToCirclesList(9, 15, 1, 5);
                 AddToBigsList("subtraction", "subtraction", "split2", "addition", "multiplication");
                 AddToGoalsList(9);
-                AddHints("HINT: try going negative"); break;
+                AddHints("HINT: try going negative");
+                AddNumberOfMoves(6); break;
 
 
             //case X:
@@ -1232,7 +1285,7 @@ public class Levels : MonoBehaviour
             toReturn.Add(goals);
             toReturn.Add(hints);
         }
-        toReturn.Add(levelNumber);
+        toReturn.Add(numberMoves);
 
         return toReturn;
     }

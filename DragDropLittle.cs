@@ -11,7 +11,6 @@ public class DragDropLittle : MonoBehaviour
     public bool isThisAnExtraCircle = false;
     public bool isThisExtraBeingUsed = false;
 
-
     private float radius;
 
     public Vector3 originalPosition;
@@ -72,7 +71,7 @@ public class DragDropLittle : MonoBehaviour
             encounteredObject = objectMagnetizedTo;
             //objectMagnetizedTo.GetComponent<MathOperators>().magnet1occupied = false;
             objectMagnetizedTo.GetComponent<MathOperators>().magnet1occupied = false;
-            encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
+            //encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
             objectMagnetizedTo.GetComponent<MathOperators>().firstNumber = null;
             objectMagnetizedTo.GetComponent<MathOperators>().firstNumberValue = -1;
         }
@@ -80,7 +79,7 @@ public class DragDropLittle : MonoBehaviour
         {
             encounteredObject = objectMagnetizedTo;
             objectMagnetizedTo.GetComponent<MathOperators>().magnet2occupied = false;
-            encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
+            //encounteredObject.GetComponent<ColorFlux>().PossiblyStartColorFlux();
             objectMagnetizedTo.GetComponent<MathOperators>().secondNumber = null;
             objectMagnetizedTo.GetComponent<MathOperators>().secondNumberValue = -1;
         }
@@ -119,9 +118,10 @@ public class DragDropLittle : MonoBehaviour
                         //Destroy(gameObject);
                         gameObject.SetActive(false);
                         GameManager.instance.backButton.SetActive(true);
+                        GameManager.instance.ReduceScore(1);
                         gameManager.checkIfLevelIsOver();
-
                         GameManager.instance.TakeSnapshot();
+
 
 
                         break;
@@ -369,7 +369,9 @@ public class DragDropLittle : MonoBehaviour
             ////Destroy(gameObject);        // destroy original number
             //gameObject.SetActive(false);
             gameObject.SetActive(false);
+            GameManager.instance.ContributeToKillFeed("split", splitAmount, valueOfThisThing, 0);
             GameManager.instance.TakeSnapshot();
+            GameManager.instance.ReduceScore(1);
             GameManager.instance.backButton.SetActive(true);
 
         }
@@ -381,6 +383,7 @@ public class DragDropLittle : MonoBehaviour
                 encounteredObject.GetComponent<Goal>().MarkGoalAsFulfilled();                
                 gameObject.SetActive(false);
                 GameManager.instance.TakeSnapshot();
+                GameManager.instance.ReduceScore(1);
                 GameManager.instance.backButton.SetActive(true);
             }
             else if (encounteredObject.GetComponent<Goal>().goalFulfilled == true)

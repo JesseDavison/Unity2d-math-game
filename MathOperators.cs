@@ -154,7 +154,9 @@ public class MathOperators : MonoBehaviour
                 secondNumber.SetActive(false);
             }
             gameObject.SetActive(false);
+            GameManager.instance.ContributeToKillFeed(whatMathDoesThisThingDo, firstNumberValue, secondNumberValue, result);
             GameManager.instance.TakeSnapshot();
+            GameManager.instance.ReduceScore(1);
             GameManager.instance.backButton.SetActive(true);
         }
     }
