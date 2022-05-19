@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject showHintButton;
     public GameObject hintText;
+    public GameObject LevelUIMainMenuButton;
 
     //public bool tutorialsActivated = true;
     public GameObject Level1Tutorial;
@@ -295,6 +296,7 @@ public class GameManager : MonoBehaviour
             hintText.SetActive(false);
             // turn off the "show hint" button
             showHintButton.SetActive(false);
+            LevelUIMainMenuButton.SetActive(false);
             // turn off the Level1 or Level2 tutorial
             Level1Tutorial.SetActive(false);
             Level2Tutorial.SetActive(false);
@@ -559,9 +561,9 @@ public class GameManager : MonoBehaviour
         int toReturn = PlayerPrefs.GetInt(temp);
         return toReturn;
     }
-    public void SetLevelScore(int levelNum, int newScore) {
+    public void SetLevelScore(int newScore) {
         string temp = "Level_";
-        temp = temp + levelNum.ToString() + "_Score";
+        temp = temp + currentLevelNumber.ToString() + "_Score";
         PlayerPrefs.SetInt(temp, newScore);
         UpdateScoreDisplay();
         UpdateMainMenuScoreStuff();
@@ -583,10 +585,35 @@ public class GameManager : MonoBehaviour
             // if the level has been completed previously, then do nothing here
         }
         else {
-            SetLevelScore(currentLevelNumber, GetLevelScore(currentLevelNumber) - points);
+            SetLevelScore(GetLevelScore(currentLevelNumber) - points);
         }
     }
 
+    public void MarkLevelAsNotPreviouslyAttempted() {
+        string temp1 = "Level_" + currentLevelNumber.ToString() + "_PreviouslyAttempted";
+        PlayerPrefs.SetInt(temp1, 0);
+    }
+    public void MarkLevelAsPreviouslyAttempted() {
+        // this method will be attached to the Main Menu button in the Level UI, from within the Unity interface
+        string temp1 = "Level_" + currentLevelNumber.ToString() + "_PreviouslyAttempted";
+        string temp2 = "Level_" + currentLevelNumber.ToString() + "_PreviousAttemptScore";
+
+        PlayerPrefs.SetInt(temp1, 1);
+        PlayerPrefs.SetInt(temp2, GetLevelScore(currentLevelNumber));
+    }
+    public bool TestWhetherLevelPreviouslyAttempted() {
+        // this method will be loaded when....
+        string temp1 = "Level_" + currentLevelNumber.ToString() + "_PreviouslyAttempted";
+        if (PlayerPrefs.GetInt(temp1) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public int GetScoreFromPreviousAttempt() {
+        string temp2 = "Level_" + currentLevelNumber.ToString() + "_PreviousAttemptScore";
+        return PlayerPrefs.GetInt(temp2);
+    }
 
 
 

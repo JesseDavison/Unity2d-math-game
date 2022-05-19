@@ -74,6 +74,8 @@ public class Levels : MonoBehaviour
     public GameObject showHintButton;
     public GameObject hint1;
     public List<GameObject> hintsList;
+    public GameObject LevelUIMainMenuButton;
+    public GameObject BackButton;
 
     //public GameObject InstantiatedCirclesParent;
 
@@ -971,8 +973,10 @@ public class Levels : MonoBehaviour
         //check if the points for this level are finalized
         //      if they are, then display the score, e.g., "final: 99"
         //      if not, then display the default score, e.g., "points: 107" where 107 comes from 100 + the allowance (movesAllowance)
-        
-        if (isThisARestart == false) {
+
+        if (isThisARestart == false)
+        {
+            //Debug.Log("this is NOT a restart");
             bool levelDone = GameManager.instance.CheckIfLevelIsCompleted(levelNumber);
             if (levelDone)
             {
@@ -980,9 +984,18 @@ public class Levels : MonoBehaviour
             }
             else
             {
-                GameManager.instance.SetLevelScore(levelNumber, (int)(100 + movesAllowance));
+                GameManager.instance.SetLevelScore((int)(100 + movesAllowance));
             }
             GameManager.instance.ShowScoreDisplay();
+        } else if (isThisARestart == true) {
+            //Debug.Log("this is a restart");
+        }
+       
+        if (GameManager.instance.TestWhetherLevelPreviouslyAttempted())
+        {
+            //Debug.Log("this WAS previously attempted");
+            GameManager.instance.SetLevelScore(GameManager.instance.GetScoreFromPreviousAttempt());
+            GameManager.instance.MarkLevelAsNotPreviouslyAttempted();
         }
 
 
@@ -1026,6 +1039,8 @@ public class Levels : MonoBehaviour
             assignTextToHints(hintsList[i], hints[i]);
         }
         showHintButton.SetActive(true);
+        LevelUIMainMenuButton.SetActive(true);
+        BackButton.SetActive(false);
 
         if (PlayerPrefs.GetInt("TutorialsActivated") == 1) {
             if (levelNumber == 0) {
