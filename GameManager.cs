@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     //public int nextIncompleteLevel;
     // **************************************************************************************************************************************
-    int highestLevelNumberThatExists = 23;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    int highestLevelNumberThatExists = 24;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
     // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
@@ -77,6 +77,7 @@ public class GameManager : MonoBehaviour
     public GameObject LevelScore;
     public TextMeshProUGUI MainMenuTotalScore;
     public TextMeshProUGUI MainMenuAverageScore;
+    public TextMeshProUGUI AllTimeHighScore;
 
 
 
@@ -284,6 +285,12 @@ public class GameManager : MonoBehaviour
         if (numberOfActiveCircles == 0 && numberOfActiveBigs == 0 && goalsAreDone == true) {
             // make the Next Level button appear
             nextLevelButton.SetActive(true);
+            // turn on the "Perfect Score!" text if the score is perfect
+            if (GetLevelScore(currentLevelNumber) == 100) {
+                nextLevelButton.transform.GetChild(1).gameObject.SetActive(true);
+            }
+
+
             restartLevelButton.SetActive(false);
             backButton.SetActive(false);
             
@@ -471,9 +478,9 @@ public class GameManager : MonoBehaviour
             case "exponent4":
                 mostRecentKillFeedString = NumToString(firstNum) + " ^ 4 = " + NumToString(result); break;
             case "squareRoot":
-                mostRecentKillFeedString = NumToString(firstNum) + " ^ 0.5 = " + NumToString(result); break;
+                mostRecentKillFeedString = NumToString(firstNum) + " ^(1/2) = " + NumToString(result); break;
             case "cubeRoot":
-                mostRecentKillFeedString = NumToString(firstNum) + " ^ 0.33 = " + NumToString(result); break;
+                mostRecentKillFeedString = NumToString(firstNum) + " ^(1/3) = " + NumToString(result); break;
             case "split":
                 if (firstNum == 2) {
                     mostRecentKillFeedString = NumToString(secondNum) + " split into 2x " + NumToString((float)(secondNum / 2.0));
@@ -499,6 +506,9 @@ public class GameManager : MonoBehaviour
     }
     public void ToggleKillFeedActive(bool boolie) {
         KillFeedBackground.SetActive(boolie);
+    }
+    public void ShowAllOfKillFeedHistory() { 
+
     }
 
 
@@ -618,11 +628,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
-
-
-
-
     public void UpdateTotalScore() {
         int runningTotal = 0;
         for (int i = 0; i <= highestLevelNumberThatExists; i++) {
@@ -650,15 +655,37 @@ public class GameManager : MonoBehaviour
             avg = (float)((runningTotal * 1.1) / (levelsCompleted * 1.1));
         }
         if (avg == 100) {
-            MainMenuAverageScore.text = "Average Points per Level     " + avg.ToString("F0");
+            MainMenuAverageScore.text = "Average Points per Level:   " + avg.ToString("F0");
         } else {
-            MainMenuAverageScore.text = "Average Points per Level     " + avg.ToString("F1");
+            MainMenuAverageScore.text = "Average Points per Level:  " + avg.ToString("F2");
         }
+
+        // now we update the HIGHEST AVERAGE SCORE PER LEVEL, OF ALL TIME
+        //      first set it to the default if the game hasn't been completed yet
+        if (PlayerPrefs.GetFloat("HighestAllTimeAverageScorePerLevel", 0) > 0) {
+            AllTimeHighScore.text = "Game Completion All-Time High Score:         " + PlayerPrefs.GetFloat("HighestAllTimeAverageScorePerLevel").ToString("F3");
+            //AllTimeHighScore.text = PlayerPrefs.GetString("HighScoreString");
+        } else {
+            AllTimeHighScore.text = "Beat all levels to set a new high score!";
+        }
+        //      now we test to see if we beat the high score
+        if (levelsCompleted == highestLevelNumberThatExists + 1) {
+            // set the PlayerPrefs highest all-time score thing (that we'll prevent from being deleted in the script for the Reset Progress button)
+            float currentHighest = PlayerPrefs.GetFloat("HighestAllTimeAverageScorePerLevel", 0);
+            if (avg > currentHighest) {
+                PlayerPrefs.SetFloat("HighestAllTimeAverageScorePerLevel", avg);
+                //PlayerPrefs.SetString("HighScoreString", "Game Completion All-Time High Score:         " + avg.ToString("F3"));
+                // now we update the text on the Main Menu screen
+                AllTimeHighScore.text = "Game Completion All-Time High Score:         " + avg.ToString("F3");
+
+            }
+        }
+
         
 
     }
     public void UpdateMainMenuScoreStuff() {
-        UpdateTotalScore();
+        //UpdateTotalScore();       // don't care about total score, only about avg score per level
         UpdateAverageScorePerLevel();
     }
 

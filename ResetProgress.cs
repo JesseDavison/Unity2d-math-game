@@ -21,6 +21,8 @@ public class ResetProgress : MonoBehaviour
         float Gcolor = PlayerPrefs.GetFloat("Gcolor");
         float Bcolor = PlayerPrefs.GetFloat("Bcolor");
         int tutorialActiveStatus = PlayerPrefs.GetInt("TutorialsActivated");
+        float highestAllTimeAverageScorePerLevel = PlayerPrefs.GetFloat("HighestAllTimeAverageScorePerLevel", 0);
+        //Debug.Log("high score before reset: " + highestAllTimeAverageScorePerLevel);
 
 
         PlayerPrefs.DeleteAll();
@@ -29,6 +31,9 @@ public class ResetProgress : MonoBehaviour
         PlayerPrefs.SetFloat("Gcolor", Gcolor);
         PlayerPrefs.SetFloat("Bcolor", Bcolor);
         PlayerPrefs.SetInt("TutorialsActivated", tutorialActiveStatus);
+        PlayerPrefs.SetFloat("HighestAllTimeAverageScorePerLevel", highestAllTimeAverageScorePerLevel);
+        GameManager.instance.UpdateMainMenuScoreStuff();
+
 
 
 
@@ -39,6 +44,10 @@ public class ResetProgress : MonoBehaviour
         GameManager.instance.SetALLLevelsAsNotCompleted();
         //reload the main menu UI if necessary????
         GameManager.instance.Awake();
+
+        //highestAllTimeAverageScorePerLevel = PlayerPrefs.GetFloat("HighestAllTimeAverageScorePerLevel", 0);
+        //Debug.Log("high score after reset: " + highestAllTimeAverageScorePerLevel);
+
     }
 
 }

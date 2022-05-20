@@ -994,8 +994,14 @@ public class Levels : MonoBehaviour
         if (GameManager.instance.TestWhetherLevelPreviouslyAttempted())
         {
             //Debug.Log("this WAS previously attempted");
-            GameManager.instance.SetLevelScore(GameManager.instance.GetScoreFromPreviousAttempt());
-            GameManager.instance.MarkLevelAsNotPreviouslyAttempted();
+            if (GameManager.instance.CheckIfLevelIsCompleted(levelNumber)) { 
+                // do nothing because, it WAS previously attempted, but IS COMPLETE, so we don't change the score
+            } else {
+                // otherwise, we know: it WAS previously attempted, but it is NOT COMPLETED
+                GameManager.instance.SetLevelScore(GameManager.instance.GetScoreFromPreviousAttempt());
+                GameManager.instance.MarkLevelAsNotPreviouslyAttempted();
+            }
+
         }
 
 
@@ -1232,9 +1238,9 @@ public class Levels : MonoBehaviour
             case 17:
                 AddToCirclesList(2, 1);
                 AddToBigsList("squareRoot", "exponent4", "addition", "exponent2");
-                AddToGoalsList(5);
+                AddToGoalsList(25);
                 AddHints("HINT: exponentiate first");
-                AddNumberOfMoves(44); break;
+                AddNumberOfMoves(5); break;
             case 18:
                 AddToCirclesList(14, 4);
                 AddToBigsList("split2", "division", "split2", "division", "subtraction");
@@ -1271,13 +1277,19 @@ public class Levels : MonoBehaviour
                 AddToGoalsList(9);
                 AddHints("HINT: try going negative");
                 AddNumberOfMoves(6); break;
-
+            case 24:
+                AddToCirclesList(216, 36, 6);
+                AddToBigsList("cubeRoot", "addition", "split2", "addition", "cubeRoot");
+                AddToGoalsList(3, 21);
+                AddHints("HINT: split 42");
+                AddNumberOfMoves(7); break;
 
             //case X:
             //    AddToCirclesList();
             //    AddToBigsList();
             //    AddToGoalsList();
-            //    AddHints("HINT: ); break;
+            //    AddHints("HINT: );
+            //    AddNumberOfMoves(); break;
             default:
                 break;
             // don't forget to change highestLevelNumberThatExists in the GameManager file
