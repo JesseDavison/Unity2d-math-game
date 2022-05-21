@@ -1283,12 +1283,24 @@ public class Levels : MonoBehaviour
                 AddToGoalsList(3, 21);
                 AddHints("HINT: split 42");
                 AddNumberOfMoves(7); break;
+            case 25:
+                AddToCirclesList(49, 7, 4);
+                AddToBigsList("subtraction", "division", "split2", "exponent2", "addition", "squareRoot");
+                AddToGoalsList(5);
+                AddHints("HINT: impossible");
+                AddNumberOfMoves(7); break;
+            case 26:
+                AddToCirclesList(9, 4, 12, 13);
+                AddToBigsList("split3", "subtraction", "multiplication", "multiplication", "multiplication", "addition");
+                AddToGoalsList(3);
+                AddHints("HINT: impossible");
+                AddNumberOfMoves(7); break;
 
             //case X:
             //    AddToCirclesList();
             //    AddToBigsList();
             //    AddToGoalsList();
-            //    AddHints("HINT: );
+            //    AddHints("HINT: impossible");
             //    AddNumberOfMoves(); break;
             default:
                 break;

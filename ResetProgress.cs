@@ -32,7 +32,7 @@ public class ResetProgress : MonoBehaviour
         PlayerPrefs.SetFloat("Bcolor", Bcolor);
         PlayerPrefs.SetInt("TutorialsActivated", tutorialActiveStatus);
         PlayerPrefs.SetFloat("HighestAllTimeAverageScorePerLevel", highestAllTimeAverageScorePerLevel);
-        GameManager.instance.UpdateMainMenuScoreStuff();
+        //GameManager.instance.UpdateMainMenuScoreStuff();
 
 
 

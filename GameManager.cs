@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     //public int nextIncompleteLevel;
     // **************************************************************************************************************************************
-    int highestLevelNumberThatExists = 24;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    int highestLevelNumberThatExists = 26;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
     // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
@@ -73,12 +73,37 @@ public class GameManager : MonoBehaviour
     public GameObject KillFeedBackground;
     public TextMeshProUGUI KillFeed;
 
+    public Button KillFeedHistory0;
+    public Button KillFeedHistory1;
+    public Button KillFeedHistory2;
+    public Button KillFeedHistory3;
+    public Button KillFeedHistory4;
+    public Button KillFeedHistory5;
+    public Button KillFeedHistory6;
+    public Button KillFeedHistory7;
+    public Button KillFeedHistory8;
+    public Button KillFeedHistory9;
+    public Button KillFeedHistory10;
+    public Button KillFeedHistory11;
+    public Button KillFeedHistory12;
+    public Button KillFeedHistory13;
+    public Button KillFeedHistory14;
+    public Button KillFeedHistory15;
+    public Button KillFeedHistory16;
+    public Button KillFeedHistory17;
+    public Button KillFeedHistory18;
+    public Button KillFeedHistory19;
+    public List<Button> KillFeedHistoryButtons;
+
     public TextMeshProUGUI thisLevelScoreText;
     public GameObject LevelScore;
     public TextMeshProUGUI MainMenuTotalScore;
     public TextMeshProUGUI MainMenuAverageScore;
     public TextMeshProUGUI AllTimeHighScore;
 
+    public int pointInHistory = -1;
+    ArrayList History = new ArrayList();
+    public int historyLength = 0;
 
 
     public void Awake()
@@ -194,6 +219,27 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        KillFeedHistoryButtons.Add(KillFeedHistory0);
+        KillFeedHistoryButtons.Add(KillFeedHistory1);
+        KillFeedHistoryButtons.Add(KillFeedHistory2);
+        KillFeedHistoryButtons.Add(KillFeedHistory3);
+        KillFeedHistoryButtons.Add(KillFeedHistory4);
+        KillFeedHistoryButtons.Add(KillFeedHistory5);
+        KillFeedHistoryButtons.Add(KillFeedHistory6);
+        KillFeedHistoryButtons.Add(KillFeedHistory7);
+        KillFeedHistoryButtons.Add(KillFeedHistory8);
+        KillFeedHistoryButtons.Add(KillFeedHistory9);
+        KillFeedHistoryButtons.Add(KillFeedHistory10);
+        KillFeedHistoryButtons.Add(KillFeedHistory11);
+        KillFeedHistoryButtons.Add(KillFeedHistory12);
+        KillFeedHistoryButtons.Add(KillFeedHistory13);
+        KillFeedHistoryButtons.Add(KillFeedHistory14);
+        KillFeedHistoryButtons.Add(KillFeedHistory15);
+        KillFeedHistoryButtons.Add(KillFeedHistory16);
+        KillFeedHistoryButtons.Add(KillFeedHistory17);
+        KillFeedHistoryButtons.Add(KillFeedHistory18);
+        KillFeedHistoryButtons.Add(KillFeedHistory19);
+
     }
 
 
@@ -285,15 +331,16 @@ public class GameManager : MonoBehaviour
         if (numberOfActiveCircles == 0 && numberOfActiveBigs == 0 && goalsAreDone == true) {
             // make the Next Level button appear
             nextLevelButton.SetActive(true);
+
             // turn on the "Perfect Score!" text if the score is perfect
             if (GetLevelScore(currentLevelNumber) == 100) {
                 nextLevelButton.transform.GetChild(1).gameObject.SetActive(true);
             }
 
-
             restartLevelButton.SetActive(false);
             backButton.SetActive(false);
-            
+            //KillFeedBackground.SetActive(false);
+
             var tempString = currentLevelNumber.ToString() + "_Completed";
             // "3_Completed"
             PlayerPrefs.SetInt(tempString, 1);      // 0 means not completed, 1 means completed
@@ -445,6 +492,8 @@ public class GameManager : MonoBehaviour
         levelSelectContentPanel.GetComponent<LevelSelector2>().ReloadIconColors();
     }
 
+
+
     public void ContributeToKillFeed(string whichMath, float firstNum, float secondNum, float result) {
         
         string NumToString(float num) {
@@ -491,6 +540,9 @@ public class GameManager : MonoBehaviour
                 } else if (firstNum == 5) {
                     mostRecentKillFeedString = NumToString(secondNum) + " split into 5x " + NumToString((float)(secondNum / 5.0));
                 } break;
+            case "goal":
+                mostRecentKillFeedString = "Goal met: " + NumToString(firstNum);
+                break;
         }
         UpdateKillFeed("");
     }
@@ -507,8 +559,32 @@ public class GameManager : MonoBehaviour
     public void ToggleKillFeedActive(bool boolie) {
         KillFeedBackground.SetActive(boolie);
     }
-    public void ShowAllOfKillFeedHistory() { 
+    public void ShowAllOfKillFeedHistory() {
+        // the first History snapshot is taken at the beginning of the level before any action is taken, so we start at index 1
+        
+        //for (int i = 1; i < History.Count; i++) {
+        //    //ArrayList temp = new ArrayList();
+        //    ArrayList temp = (ArrayList)History[i];
+        //    string tempString = (string)temp[4];
+        //    Debug.Log("index " + i.ToString() + ", string contents: " + tempString);
+        //}
+        
+        // need to make a popup panel thing in Unity interface: make it look like a drop-down menu.... DONE
+        // by default each Button in KillFeedHistoryButtons will be .SetActive(false), so we only enable the ones we need... and HideKillFeedHistory() will turn them all off
 
+        for (int i = 1; i < History.Count; i++) {
+            // enable the Button and then set its text
+            KillFeedHistoryButtons[i - 1].gameObject.SetActive(true);
+            ArrayList temp = (ArrayList)History[i];
+            string text = (string)temp[4];
+
+            KillFeedHistoryButtons[i - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
+        }
+    }
+    public void HideKillFeedHistory() { 
+        for (int i = 0; i < 20; i++) {
+            KillFeedHistoryButtons[i].gameObject.SetActive(false);
+        }
     }
 
 
@@ -595,7 +671,10 @@ public class GameManager : MonoBehaviour
             // if the level has been completed previously, then do nothing here
         }
         else {
-            SetLevelScore(GetLevelScore(currentLevelNumber) - points);
+            // don't let the points go below zero
+            if (GetLevelScore(currentLevelNumber) > 0) {
+                SetLevelScore(GetLevelScore(currentLevelNumber) - points);
+            }
         }
     }
 
@@ -742,9 +821,7 @@ public class GameManager : MonoBehaviour
 
 
 
-    public int pointInHistory = -1;
-    ArrayList History = new ArrayList();
-    public int historyLength = 0;
+
 
 
     public void TakeSnapshot() {
@@ -797,6 +874,8 @@ public class GameManager : MonoBehaviour
         if (historyLength <= 1) {
             // turn off the BACK button
             backButton.SetActive(false);
+            // turn off the Kill Feed button
+            KillFeedBackground.SetActive(false);
         }
 
     }

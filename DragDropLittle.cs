@@ -119,6 +119,7 @@ public class DragDropLittle : MonoBehaviour
                         gameObject.SetActive(false);
                         GameManager.instance.backButton.SetActive(true);
                         GameManager.instance.ReduceScore(1);
+                        GameManager.instance.ContributeToKillFeed("goal", goal.GetComponent<Goal>().goalNumber, 0, 0);
                         gameManager.checkIfLevelIsOver();
                         GameManager.instance.TakeSnapshot();
 
@@ -382,9 +383,10 @@ public class DragDropLittle : MonoBehaviour
             {
                 encounteredObject.GetComponent<Goal>().MarkGoalAsFulfilled();                
                 gameObject.SetActive(false);
+                GameManager.instance.ContributeToKillFeed("goal", goalNumber, 0, 0);
                 GameManager.instance.TakeSnapshot();
                 GameManager.instance.ReduceScore(1);
-                GameManager.instance.backButton.SetActive(true);
+                //GameManager.instance.backButton.SetActive(true);
             }
             else if (encounteredObject.GetComponent<Goal>().goalFulfilled == true)
             {
