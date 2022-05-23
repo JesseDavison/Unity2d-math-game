@@ -18,17 +18,17 @@ public class GetHint : MonoBehaviour
     {
         thisButton = GetComponent<Button>();
         thisButton.onClick.AddListener(ToggleHintActive);
-        normalColor = thisButton.GetComponent<Image>().color;
+        //normalColor = thisButton.GetComponent<Image>().color;
     }
 
     public void ToggleHintActive() {
         if (HintText.activeSelf == true) {
             HintText.SetActive(false);
             // normal original color
-            thisButton.GetComponent<Image>().color = normalColor;
+            //thisButton.GetComponent<Image>().color = normalColor;
         } else {
             HintText.SetActive(true);
-            thisButton.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 1);
+            //thisButton.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 1);
         }
     }
 

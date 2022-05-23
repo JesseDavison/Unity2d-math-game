@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     //public int nextIncompleteLevel;
     // **************************************************************************************************************************************
-    int highestLevelNumberThatExists = 26;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
+    int highestLevelNumberThatExists = 30;        // on a scale of level 0 up thru level X, see Levels.cs for actual level contents
     // **************************************************************************************************************************************
     public bool allLevelsAreCompleted = false;
 
@@ -73,27 +73,29 @@ public class GameManager : MonoBehaviour
     public GameObject KillFeedBackground;
     public TextMeshProUGUI KillFeed;
 
-    public Button KillFeedHistory0;
-    public Button KillFeedHistory1;
-    public Button KillFeedHistory2;
-    public Button KillFeedHistory3;
-    public Button KillFeedHistory4;
-    public Button KillFeedHistory5;
-    public Button KillFeedHistory6;
-    public Button KillFeedHistory7;
-    public Button KillFeedHistory8;
-    public Button KillFeedHistory9;
-    public Button KillFeedHistory10;
-    public Button KillFeedHistory11;
-    public Button KillFeedHistory12;
-    public Button KillFeedHistory13;
-    public Button KillFeedHistory14;
-    public Button KillFeedHistory15;
-    public Button KillFeedHistory16;
-    public Button KillFeedHistory17;
-    public Button KillFeedHistory18;
-    public Button KillFeedHistory19;
-    public List<Button> KillFeedHistoryButtons;
+    public GameObject KillFeedUnit1;
+    public GameObject KillFeedUnit2;
+    public GameObject KillFeedUnit3;
+    public GameObject KillFeedUnit4;
+    public GameObject KillFeedUnit5;
+    public GameObject KillFeedUnit6;
+    public GameObject KillFeedUnit7;
+    public GameObject KillFeedUnit8;
+    public GameObject KillFeedUnit9;
+    public GameObject KillFeedUnit10;
+    public GameObject KillFeedUnit11;
+    public GameObject KillFeedUnit12;
+    public GameObject KillFeedUnit13;
+    public GameObject KillFeedUnit14;
+    public GameObject KillFeedUnit15;
+    public GameObject KillFeedUnit16;
+    public GameObject KillFeedUnit17;
+    public GameObject KillFeedUnit18;
+    public GameObject KillFeedUnit19;
+    public GameObject KillFeedUnit20;
+    public List<GameObject> KillFeedHistory;
+    public GameObject KillFeedTurnOffButton;
+
 
     public TextMeshProUGUI thisLevelScoreText;
     public GameObject LevelScore;
@@ -219,26 +221,27 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        KillFeedHistoryButtons.Add(KillFeedHistory0);
-        KillFeedHistoryButtons.Add(KillFeedHistory1);
-        KillFeedHistoryButtons.Add(KillFeedHistory2);
-        KillFeedHistoryButtons.Add(KillFeedHistory3);
-        KillFeedHistoryButtons.Add(KillFeedHistory4);
-        KillFeedHistoryButtons.Add(KillFeedHistory5);
-        KillFeedHistoryButtons.Add(KillFeedHistory6);
-        KillFeedHistoryButtons.Add(KillFeedHistory7);
-        KillFeedHistoryButtons.Add(KillFeedHistory8);
-        KillFeedHistoryButtons.Add(KillFeedHistory9);
-        KillFeedHistoryButtons.Add(KillFeedHistory10);
-        KillFeedHistoryButtons.Add(KillFeedHistory11);
-        KillFeedHistoryButtons.Add(KillFeedHistory12);
-        KillFeedHistoryButtons.Add(KillFeedHistory13);
-        KillFeedHistoryButtons.Add(KillFeedHistory14);
-        KillFeedHistoryButtons.Add(KillFeedHistory15);
-        KillFeedHistoryButtons.Add(KillFeedHistory16);
-        KillFeedHistoryButtons.Add(KillFeedHistory17);
-        KillFeedHistoryButtons.Add(KillFeedHistory18);
-        KillFeedHistoryButtons.Add(KillFeedHistory19);
+        KillFeedHistory.Add(KillFeedUnit1);
+        KillFeedHistory.Add(KillFeedUnit2);
+        KillFeedHistory.Add(KillFeedUnit3);
+        KillFeedHistory.Add(KillFeedUnit4);
+        KillFeedHistory.Add(KillFeedUnit5);
+        KillFeedHistory.Add(KillFeedUnit6);
+        KillFeedHistory.Add(KillFeedUnit7);
+        KillFeedHistory.Add(KillFeedUnit8);
+        KillFeedHistory.Add(KillFeedUnit9);
+        KillFeedHistory.Add(KillFeedUnit10);
+        KillFeedHistory.Add(KillFeedUnit11);
+        KillFeedHistory.Add(KillFeedUnit12);
+        KillFeedHistory.Add(KillFeedUnit13);
+        KillFeedHistory.Add(KillFeedUnit14);
+        KillFeedHistory.Add(KillFeedUnit15);
+        KillFeedHistory.Add(KillFeedUnit16);
+        KillFeedHistory.Add(KillFeedUnit17);
+        KillFeedHistory.Add(KillFeedUnit18);
+        KillFeedHistory.Add(KillFeedUnit19);
+        KillFeedHistory.Add(KillFeedUnit20);
+
 
     }
 
@@ -332,8 +335,8 @@ public class GameManager : MonoBehaviour
             // make the Next Level button appear
             nextLevelButton.SetActive(true);
 
-            // turn on the "Perfect Score!" text if the score is perfect
-            if (GetLevelScore(currentLevelNumber) == 100) {
+            // turn on the "Perfect Score!" text if the score is perfect AND IF the game wasn't previously completed
+            if (GetLevelScore(currentLevelNumber) == 100 && !CheckIfLevelIsCompleted(currentLevelNumber)) {
                 nextLevelButton.transform.GetChild(1).gameObject.SetActive(true);
             }
 
@@ -364,6 +367,7 @@ public class GameManager : MonoBehaviour
             UpdateLevelCompletionInfo();
             UpdateKillFeed("  ");
             KillFeedBackground.SetActive(false);
+            HideKillFeedHistory();
             ResetHistory();
             
 
@@ -449,6 +453,7 @@ public class GameManager : MonoBehaviour
         Level1Tutorial.SetActive(false);
         Level2Tutorial.SetActive(false);
         settingsUI.SetActive(false);
+        hintText.SetActive(false);
         UpdateMainMenuScoreStuff();
     }
 
@@ -559,36 +564,103 @@ public class GameManager : MonoBehaviour
     public void ToggleKillFeedActive(bool boolie) {
         KillFeedBackground.SetActive(boolie);
     }
-    public void ShowAllOfKillFeedHistory() {
-        // the first History snapshot is taken at the beginning of the level before any action is taken, so we start at index 1
-        
-        //for (int i = 1; i < History.Count; i++) {
-        //    //ArrayList temp = new ArrayList();
-        //    ArrayList temp = (ArrayList)History[i];
-        //    string tempString = (string)temp[4];
-        //    Debug.Log("index " + i.ToString() + ", string contents: " + tempString);
+    //public void ShowAllOfKillFeedHistory() {
+
+        ////for (int i = 1; i < History.Count; i++) {
+        ////    // enable the Button and then set its text
+        ////    KillFeedHistoryButtons[i - 1].gameObject.SetActive(true);
+        ////    ArrayList temp = (ArrayList)History[i];
+        ////    string text = (string)temp[4];
+
+        ////    KillFeedHistoryButtons[i - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
+        ////}
+
+
+
+        //// ANIMATING THE KILL FEED HISTORY:
+        ////      calculate how many kill feed items there will be
+        //int numberOfKillFeedItems = History.Count;
+        ////      determine the y-position of each kill feed button... looks like they're 58.7 apart from each other, and the top-most is at -31.35
+        //List<float> yValues = new List<float>();
+        //yValues.Add(-31.35f);
+        //for (int i = 1; i < numberOfKillFeedItems; i++) {
+        //    yValues.Add(yValues[i - 1] - 58.7f);
         //}
-        
-        // need to make a popup panel thing in Unity interface: make it look like a drop-down menu.... DONE
-        // by default each Button in KillFeedHistoryButtons will be .SetActive(false), so we only enable the ones we need... and HideKillFeedHistory() will turn them all off
 
-        for (int i = 1; i < History.Count; i++) {
-            // enable the Button and then set its text
-            KillFeedHistoryButtons[i - 1].gameObject.SetActive(true);
-            ArrayList temp = (ArrayList)History[i];
-            string text = (string)temp[4];
+        ////      activate & then start moving the bottom-most button... using the move script attached to the button? (Set start & end points from here?)
+        //for (int i = 1; i < History.Count; i++) {
+        //    // enable the Button and then set its text
+        //    KillFeedHistoryButtons[i - 1].gameObject.SetActive(true);
+        //    ArrayList temp = (ArrayList)History[i];
+        //    string text = (string)temp[4];
+        //    KillFeedHistoryButtons[i - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
+        //    //KillFeedHistoryButtons[i - 1].gameObject.GetComponent<KillFeedButtonMove>().startingPosition = new Vector3(193.2f, -31.35f, 0);
+        //    //KillFeedHistoryButtons[i - 1].gameObject.GetComponent<KillFeedButtonMove>().finalPosition = new Vector3(193.2f, yValues[i - 1], 0);
 
-            KillFeedHistoryButtons[i - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
-        }
-    }
+        //    KillFeedHistoryButtons[i - 1].gameObject.GetComponent<KillFeedButtonMove>().StartMotion();
+
+
+        //    //KillFeedHistoryButtons[1].gameObject.GetComponent<KillFeedButtonMove>().StartMotion(new Vector3(193.2f, -30, 0), new Vector3(193.2f, -200, 0));
+
+
+
+
+
+
+        //      put a black-background kill feed button at the top-most spot so the most recent item isn't duplicated
+        //      as item #n moves past spot 1,
+        //          activate & then start moving the second-bottom-most button
+        //      etc
+
+
+
+    //}
     public void HideKillFeedHistory() { 
         for (int i = 0; i < 20; i++) {
-            KillFeedHistoryButtons[i].gameObject.SetActive(false);
+            //Debug.Log("hiding kill feed history");
+            KillFeedHistory[i].gameObject.SetActive(false);
+            KillFeedHistory[i].gameObject.GetComponent<KillFeedButtonMove>().ResetPosition();
+            KillFeedTurnOffButton.SetActive(false);
         }
     }
 
 
+    public void ShowKillFeedHistory()
+    {
+        KillFeedTurnOffButton.SetActive(true);
 
+        //      activate & then start moving the bottom-most button... using the move script attached to the button? (Set start & end points from here?)
+        for (int i = 1; i < History.Count; i++)
+        {
+            // enable the Button and then set its text
+            KillFeedHistory[i - 1].gameObject.SetActive(true);
+            ArrayList temp = (ArrayList)History[i];
+            string text = (string)temp[4];
+            KillFeedHistory[i - 1].transform.GetChild(0).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
+
+            //KillFeedHistoryButtons[i - 1].gameObject.GetComponent<KillFeedButtonMove>().startingPosition = new Vector3(193.2f, -31.35f, 0);
+
+
+            float yValue = 0 + -32 * (i - 1);
+            KillFeedHistory[i - 1].gameObject.GetComponent<KillFeedButtonMove>().finalPositionYValue = yValue;
+
+            int numberOfKillFeedItems = History.Count;
+            if (numberOfKillFeedItems > 2) {
+                KillFeedHistory[i - 1].gameObject.GetComponent<KillFeedButtonMove>().StartMotion();
+                if (i == History.Count - 1)
+                {
+                    KillFeedHistory[i - 1].gameObject.GetComponent<KillFeedButtonMove>().receivedGreenLight = true;
+                }
+            }
+
+
+
+            //KillFeedHistoryButtons[1].gameObject.GetComponent<KillFeedButtonMove>().StartMotion(new Vector3(193.2f, -30, 0), new Vector3(193.2f, -200, 0));
+
+
+        }
+
+    }
 
 
 
@@ -674,6 +746,7 @@ public class GameManager : MonoBehaviour
             // don't let the points go below zero
             if (GetLevelScore(currentLevelNumber) > 0) {
                 SetLevelScore(GetLevelScore(currentLevelNumber) - points);
+                MarkLevelAsPreviouslyAttempted();
             }
         }
     }
@@ -684,6 +757,7 @@ public class GameManager : MonoBehaviour
     }
     public void MarkLevelAsPreviouslyAttempted() {
         // this method will be attached to the Main Menu button in the Level UI, from within the Unity interface
+        // .... aaaaaand this method will kick in EVERY TIME YOU LOSE POINTS so user can't cheat
         string temp1 = "Level_" + currentLevelNumber.ToString() + "_PreviouslyAttempted";
         string temp2 = "Level_" + currentLevelNumber.ToString() + "_PreviousAttemptScore";
 

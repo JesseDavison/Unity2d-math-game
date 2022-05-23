@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class Levels : MonoBehaviour
@@ -71,7 +72,7 @@ public class Levels : MonoBehaviour
     public GameObject goal5;
     public List<GameObject> goalsList;
 
-    public GameObject showHintButton;
+    public Button showHintButton;
     public GameObject hint1;
     public List<GameObject> hintsList;
     public GameObject LevelUIMainMenuButton;
@@ -974,36 +975,24 @@ public class Levels : MonoBehaviour
         //      if they are, then display the score, e.g., "final: 99"
         //      if not, then display the default score, e.g., "points: 107" where 107 comes from 100 + the allowance (movesAllowance)
 
-        if (isThisARestart == false)
-        {
-            //Debug.Log("this is NOT a restart");
-            bool levelDone = GameManager.instance.CheckIfLevelIsCompleted(levelNumber);
-            if (levelDone)
-            {
-                GameManager.instance.UpdateScoreToCompleted();
-            }
-            else
-            {
-                GameManager.instance.SetLevelScore((int)(100 + movesAllowance));
-            }
-            GameManager.instance.ShowScoreDisplay();
-        } else if (isThisARestart == true) {
-            //Debug.Log("this is a restart");
-        }
-       
+      
+        
+        
         if (GameManager.instance.TestWhetherLevelPreviouslyAttempted())
         {
             //Debug.Log("this WAS previously attempted");
-            if (GameManager.instance.CheckIfLevelIsCompleted(levelNumber)) { 
-                // do nothing because, it WAS previously attempted, but IS COMPLETE, so we don't change the score
+            if (GameManager.instance.CheckIfLevelIsCompleted(levelNumber)) {
+                GameManager.instance.UpdateScoreToCompleted();
             } else {
                 // otherwise, we know: it WAS previously attempted, but it is NOT COMPLETED
                 GameManager.instance.SetLevelScore(GameManager.instance.GetScoreFromPreviousAttempt());
-                GameManager.instance.MarkLevelAsNotPreviouslyAttempted();
             }
 
+        } else {
+            // it's never been attempted before, so set the point allowance to the default
+            GameManager.instance.SetLevelScore((int)(100 + movesAllowance));
         }
-
+        GameManager.instance.ShowScoreDisplay();
 
 
 
@@ -1044,7 +1033,8 @@ public class Levels : MonoBehaviour
         for (int i = 0; i < numberOfHints; i++) {
             assignTextToHints(hintsList[i], hints[i]);
         }
-        showHintButton.SetActive(true);
+        showHintButton.gameObject.SetActive(true);
+        showHintButton.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         LevelUIMainMenuButton.SetActive(true);
         BackButton.SetActive(false);
 
@@ -1295,6 +1285,32 @@ public class Levels : MonoBehaviour
                 AddToGoalsList(3);
                 AddHints("HINT: impossible");
                 AddNumberOfMoves(7); break;
+            case 27:
+                AddToCirclesList(34, 30, 32);
+                AddToBigsList("subtraction", "exponent3", "exponent3", "division");
+                AddToGoalsList(8);
+                AddHints("HINT: impossible");
+                AddNumberOfMoves(5); break;
+            case 28:
+                AddToCirclesList(24, 25, 26, 37, 4);
+                AddToBigsList("subtraction", "multiplication", "addition", "exponent2", "addition", "cubeRoot");
+                AddToGoalsList(5);
+                AddHints("HINT: not all differences are positive");
+                AddNumberOfMoves(7); break;
+            case 29:
+                AddToCirclesList(5, 5, 5, 10, 15);
+                AddToBigsList("division", "division", "addition", "exponent2", "multiplication");
+                AddToGoalsList(4);
+                AddHints("HINT: be rational");
+                AddNumberOfMoves(6); break;
+            case 30:
+                AddToCirclesList(2, 2, 2, 2, 2, 2);
+                AddToBigsList("addition", "exponent2", "division", "split4", "division", "multiplication");
+                AddToGoalsList(2, 2, 2, 2, 2);
+                AddHints("HINT: add first");
+                AddNumberOfMoves(11); break;
+           
+
 
             //case X:
             //    AddToCirclesList();
